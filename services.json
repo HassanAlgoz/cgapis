@@ -1,0 +1,86 @@
+{
+    "version": 0.1,
+    "services": {
+        "User": {
+            "ops": {
+                "getUsersList": {
+                    "req": {
+                        "skip": { "type": "number", "required": true },
+                        "limit": { "type": "number", "required": true },
+                        "select": { "type": "array", "items": { "type": "User" } }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" },
+                            "users": { "type": "array", "items": { "type": "User" } }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors": { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "getUser": {
+                    "req": {
+                        "id": { "type": "string", "required": true }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" },
+                            "user": { "type": "object" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors": { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                }
+            }
+        },
+        "Course": {
+            "ops": {
+                "createCourse": {
+                    "req": {
+                        "title":    { "type": "string", "required": true },
+                        "subtitle": { "type": "string", "required": true }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors": { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "getCourse": {
+                    "req": {
+                        "id": { "type": "string", "required": true }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" },
+                            "data": { "type": "Course" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors": { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "types": {
+        "User": {
+            "email": { "type": "string" },
+            "password": { "type": "string" },
+            "age": { "type": "string" }
+        },
+        "Course": {
+            "title": { "type": "string" },
+            "subtitle": { "type": "string" }
+        }
+    }
+}

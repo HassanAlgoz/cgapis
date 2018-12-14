@@ -1,0 +1,17 @@
+{
+  "name": "node-browser-rpc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Hassan Algoz",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^10.12.15",
+    "djv": "^2.1.1",
+    "prettier": "^1.15.3"
+  }
+}
