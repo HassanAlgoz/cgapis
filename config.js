@@ -4,5 +4,11 @@ const config = {
     client_api_dir: path.join(__dirname, '/client/api'),
     services_file:  path.join(__dirname, '/services.json'),
     api_path:       '/api/v1',
+
+    prettier: {
+        parser:        'typescript',
+        tabWidth:      4,
+        trailingComma: 'all',
+    },
 };
 module.exports = config;

@@ -1,22 +1,22 @@
 {
-    "version": 0.1,
+    "version" : 0.1,
     "services": {
         "User": {
             "ops": {
                 "getUsersList": {
                     "req": {
-                        "skip": { "type": "number", "required": true },
-                        "limit": { "type": "number", "required": true },
+                        "skip"  : { "type": "number", "required": true },
+                        "limit" : { "type": "number", "required": true },
                         "select": { "type": "array", "items": { "type": "User" } }
                     },
                     "res": {
                         "ok": {
                             "message": { "type": "string" },
-                            "users": { "type": "array", "items": { "type": "User" } }
+                            "users"  : { "type": "array", "items": { "type": "User" } }
                         },
                         "fail": {
                             "message": { "type": "string" },
-                            "errors": { "type": "array", "items": { "type": "string" } }
+                            "errors" : { "type": "array", "items": { "type": "string" } }
                         }
                     }
                 },
@@ -27,11 +27,11 @@
                     "res": {
                         "ok": {
                             "message": { "type": "string" },
-                            "user": { "type": "object" }
+                            "user"   : { "type": "object" }
                         },
                         "fail": {
                             "message": { "type": "string" },
-                            "errors": { "type": "array", "items": { "type": "string" } }
+                            "errors" : { "type": "array", "items": { "type": "string" } }
                         }
                     }
                 }
@@ -41,7 +41,7 @@
             "ops": {
                 "createCourse": {
                     "req": {
-                        "title":    { "type": "string", "required": true },
+                        "title"   : { "type": "string", "required": true },
                         "subtitle": { "type": "string", "required": true }
                     },
                     "res": {
@@ -50,7 +50,7 @@
                         },
                         "fail": {
                             "message": { "type": "string" },
-                            "errors": { "type": "array", "items": { "type": "string" } }
+                            "errors" : { "type": "array", "items": { "type": "string" } }
                         }
                     }
                 },
@@ -61,11 +61,11 @@
                     "res": {
                         "ok": {
                             "message": { "type": "string" },
-                            "data": { "type": "Course" }
+                            "data"   : { "type": "Course" }
                         },
                         "fail": {
                             "message": { "type": "string" },
-                            "errors": { "type": "array", "items": { "type": "string" } }
+                            "errors" : { "type": "array", "items": { "type": "string" } }
                         }
                     }
                 }
@@ -74,12 +74,12 @@
     },
     "types": {
         "User": {
-            "email": { "type": "string" },
+            "email"   : { "type": "string" },
             "password": { "type": "string" },
-            "age": { "type": "string" }
+            "age"     : { "type": "string" }
         },
         "Course": {
-            "title": { "type": "string" },
+            "title"   : { "type": "string" },
             "subtitle": { "type": "string" }
         }
     }

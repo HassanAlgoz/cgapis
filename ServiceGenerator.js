@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config');
 const utils = require('./utils');
+const prettier = require('prettier');
 
 
 function defaultParameters(obj) {
@@ -166,8 +167,8 @@ class ServiceGenerator {
         }
 
         const code = `
-            // Auto-generated "${serviceName}Service.js"
-            // PLEASE DO NOT CHANGE
+            // Auto-generated "${serviceName}.js"
+            // PLEASE DO NOT CHANGE FILE
             ${imports}
             const ${serviceName}Service = {
                 ${methods.join(',\n\n')}
@@ -175,19 +176,19 @@ class ServiceGenerator {
             export default ${serviceName}Service;
             `;
 
-        fs.writeFileSync(path.join(__dirname, `/client/api/${serviceName}Service.js`), code);
+        const formatted = prettier.format(code, config.prettier);
+        fs.writeFileSync(path.join(__dirname, `/client/api/${serviceName}.js`), formatted);
     }
 
     // genServer generates the server code to provide the service
     genServer(serviceName, json) {
-
+        // // Models
+        // const User = require('../models/${serviceName}');
         const imports = `
-            // Models
-            const User = require('./models/user');
-            // Routes
-            const router = require('express').Router();
-            module.exports.router = router;
-            `;
+        // Routes
+        const router = require('express').Router();
+        module.exports.router = router;
+        `;
 
         const ops = json.ops;
         const methodsAndRoutes = [];
@@ -217,11 +218,12 @@ class ServiceGenerator {
         }
 
         const code = `
+            // Auto-generated "${serviceName}.js"
             ${imports}
             ${methodsAndRoutes.join('\n\n')}
             `;
-
-        fs.writeFileSync(path.join(__dirname, `/server/api/${serviceName}Service.js`), code);
+        const formatted = prettier.format(code, config.prettier);
+        fs.writeFileSync(path.join(__dirname, `/server/api/${serviceName}.js`), formatted);
     }
 
 }
