@@ -134,13 +134,14 @@ class ServiceGenerator {
                 fail: this.initializeFields(ops[opName].res.fail),
             };
             const isGet = opName.startsWith('get');
-            methods.push(`${opName}(${objDefaultParameters(req)}) {
-                    for(const key in _obj) {
-                        if (!_obj[key]) {
-                            delete _obj.key;
-                        }
-                    }
-                    const queryString = getJSONAsURLEncoded(_obj);
+            methods.push(`${opName}(${isGet ? objDefaultParameters(req) : defaultParameters(req)}) {
+                ${isGet ? `for(const key in _obj) {
+                                if (!_obj[key]) {
+                                    delete _obj.key;
+                                }
+                            }
+                            const queryString = getJSONAsURLEncoded(_obj);
+                            ` : ''}
                     return fetch("${this.apiPath}/${serviceName}/${opName}" ${isGet ? '+ queryString' : ''}, {
                         method: "GET",
                         credentials: "same-origin",
