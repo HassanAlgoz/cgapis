@@ -1,7 +1,7 @@
 const path = require('path');
 const config = {
-    server_api_dir: path.join(__dirname, '/server'),
-    client_api_dir: path.join(__dirname, '/client'),
+    server_dir:    path.join(__dirname, '/server'),
+    client_dir:    path.join(__dirname, '/client'),
     services_file:  path.join(__dirname, '/services.json'),
     api_path:       '/api/v1',
 

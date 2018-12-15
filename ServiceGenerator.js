@@ -107,7 +107,7 @@ class ServiceGenerator {
                 case 'boolean': obj[key] = false; break;
                 case 'array': obj[key] = []; break;
                 case 'object': {
-                    // the "zero object" is undefined/nothing
+                    // the "zero object" is undefined/nothing, thus the variable is ommited
                 } break;
 
                 default: {
@@ -210,10 +210,13 @@ class ServiceGenerator {
             const methodName = `${opName}`;
             methods.push(`async ${methodName}(${defaultParameters(req)}) {
                     throw '"${serviceName}.${methodName}" is not implemented';
-                    // @TODO: Success
+                    //#{ @TODO: Success
                     return (${defaultReturn(res.ok)});
-                    // @TODO: Fail
+                    //#}
+
+                    //#{ @TODO: Fail
                     return (${defaultReturn(res.fail)});
+                    //#}
                 }
             `);
             routes.push(`const { ${methodName} } = require('./${serviceName}');
@@ -225,19 +228,22 @@ class ServiceGenerator {
             );
         }
 
-        const routersCode = `
+        let routersCode = prettier.format(`
         // ${serviceName} Routes
-        ${routes.join('\n\n')}`;
-        const serviceCode = `
+        ${routes.join('\n\n')}`
+        , config.prettier);
+        let serviceCode = prettier.format(`
             // Auto-generated service: "${serviceName}.js"
             module.exports = {
                 ${methods.join(',\n\n')}
             }
-            ;
-        `;
+            ;`
+        , config.prettier)
+            .replace(/\/\/#{/g, '/*')
+            .replace(/\/\/#}/g, '*/');
 
-        fs.appendFileSync(path.join(this.serverDir, '/api/routes.js'), prettier.format(routersCode, config.prettier));
-        fs.writeFileSync(path.join(this.serverDir, '/api', `/${serviceName}.js`), prettier.format(serviceCode, config.prettier));
+        fs.appendFileSync(path.join(this.serverDir, '/api/routes.js'), routersCode);
+        fs.writeFileSync(path.join(this.serverDir, '/api', `/${serviceName}.js`), serviceCode);
     }
 
 }
