@@ -60,6 +60,9 @@ class ServiceGenerator {
         this.serverDir = serverDir;
         this.clientDir = clientDir;
         this.apiPath = apiPath;
+
+        this.createRoutesFile(path.join(this.serverDir, '/api/routes.js'));
+
         // Read
         this.json = utils.readJSONFile(servicesFile);
         this.types = this.json.types;
@@ -70,6 +73,18 @@ class ServiceGenerator {
             this.genClient(serviceName, this.json.services[serviceName]);
             this.genServer(serviceName, this.json.services[serviceName]);
         }
+    }
+
+    createRoutesFile(filePath) {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        fs.writeFileSync(filePath, prettier.format(`
+        // Auto-generated routes
+        // DO NOT MODIFY THIS FILE
+        const router = require("express").Router();
+        module.exports = router;`, config.prettier)
+        );
     }
 
     initializeFields(schema) {
@@ -193,8 +208,7 @@ class ServiceGenerator {
             };
             const verb = opName.startsWith('get') ? 'get' : 'post';
             const methodName = `${opName}`;
-            methods.push(`
-                async ${methodName}(${defaultParameters(req)}) {
+            methods.push(`async ${methodName}(${defaultParameters(req)}) {
                     throw '"${serviceName}.${methodName}" is not implemented';
                     // @TODO: Success
                     return (${defaultReturn(res.ok)});
@@ -202,9 +216,7 @@ class ServiceGenerator {
                     return (${defaultReturn(res.fail)});
                 }
             `);
-            routes.push(
-                `
-                const { ${methodName} } = require('./${serviceName}');
+            routes.push(`const { ${methodName} } = require('./${serviceName}');
                 router.${verb}('${this.apiPath}/${serviceName}/${opName}', async (req, res, next) => {
                     const ${destructuring(req)} = req.body;
                     const jsonResponse = await ${methodName}(${destructuring(req)});
@@ -213,15 +225,9 @@ class ServiceGenerator {
             );
         }
 
-        const routerCode = `
-            // Auto-generated router: "${serviceName}-router.js"
-            // DO NOT MODIFY THIS FILE
-            // Routes
-            const router = require('express').Router();
-            module.exports = router;
-
-            ${routes.join('\n\n')}
-            `;
+        const routersCode = `
+        // ${serviceName} Routes
+        ${routes.join('\n\n')}`;
         const serviceCode = `
             // Auto-generated service: "${serviceName}.js"
             module.exports = {
@@ -230,8 +236,8 @@ class ServiceGenerator {
             ;
         `;
 
-        fs.writeFileSync(`${this.serverDir}/api/${serviceName}-router.js`, prettier.format(routerCode, config.prettier));
-        fs.writeFileSync(`${this.serverDir}/api/${serviceName}.js`, prettier.format(serviceCode, config.prettier));
+        fs.appendFileSync(path.join(this.serverDir, '/api/routes.js'), prettier.format(routersCode, config.prettier));
+        fs.writeFileSync(path.join(this.serverDir, '/api', `/${serviceName}.js`), prettier.format(serviceCode, config.prettier));
     }
 
 }
