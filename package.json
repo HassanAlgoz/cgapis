@@ -1,12 +1,21 @@
 {
-  "name": "node-browser-rpc",
+  "name": "node-browser-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "gen.js",
+  "description": "A type-safe API generator. Both client- and server-side.",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "api",
+    "rpc",
+    "web services",
+    "code generator",
+    "api generator",
+    "codegen",
+    "type-safe",
+    "swagger"
+  ],
   "author": "Hassan Algoz",
   "license": "ISC",
   "dependencies": {
