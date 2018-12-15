@@ -67,7 +67,7 @@ module.exports = {
         // Stylistic
         "brace-style": ["warn", "1tbs"],
         "indent": ["error", 4],
-        "quotes": ["warn", "single"],
+        "quotes": ["warn", "double"],
         "no-ternary": "off",
         "no-trailing-spaces": "warn",
         "key-spacing": ["warn", {
