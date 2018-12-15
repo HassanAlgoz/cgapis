@@ -177,22 +177,14 @@ class ServiceGenerator {
             export default ${serviceName}Service;
             `;
 
-        const formatted = prettier.format(code, config.prettier);
-        fs.writeFileSync(path.join(__dirname, `/client/api/${serviceName}.js`), formatted);
+        fs.writeFileSync(`${this.clientDir}/api/${serviceName}.js`, prettier.format(code, config.prettier));
     }
 
     // genServer generates the server code to provide the service
     genServer(serviceName, json) {
-        // // Models
-        // const User = require('../models/${serviceName}');
-        const imports = `
-        // Routes
-        const router = require('express').Router();
-        module.exports.router = router;
-        `;
-
         const ops = json.ops;
-        const methodsAndRoutes = [];
+        const methods = [];
+        const routes = [];
         for (const opName in ops) {
             const req = this.initializeFields(ops[opName].req);
             const res = {
@@ -201,30 +193,45 @@ class ServiceGenerator {
             };
             const verb = opName.startsWith('get') ? 'get' : 'post';
             const methodName = `${opName}`;
-            methodsAndRoutes.push(`
-                async function ${methodName}(${objDefaultParameters(req)}) {
-                    throw '"${methodName}" is not implemented';
+            methods.push(`
+                async ${methodName}(${defaultParameters(req)}) {
+                    throw '"${serviceName}.${methodName}" is not implemented';
                     // @TODO: Success
                     return (${defaultReturn(res.ok)});
                     // @TODO: Fail
                     return (${defaultReturn(res.fail)});
                 }
+            `);
+            routes.push(
+                `
+                const { ${methodName} } = require('./${serviceName}');
                 router.${verb}('${this.apiPath}/${serviceName}/${opName}', async (req, res, next) => {
                     const ${destructuring(req)} = req.body;
                     const jsonResponse = await ${methodName}(${destructuring(req)});
                     res.status(200).json(jsonResponse);
-                });
-                module.exports.${methodName} = ${methodName};
-                `);
+                });`
+            );
         }
 
-        const code = `
-            // Auto-generated "${serviceName}.js"
-            ${imports}
-            ${methodsAndRoutes.join('\n\n')}
+        const routerCode = `
+            // Auto-generated router: "${serviceName}-router.js"
+            // DO NOT MODIFY THIS FILE
+            // Routes
+            const router = require('express').Router();
+            module.exports = router;
+
+            ${routes.join('\n\n')}
             `;
-        const formatted = prettier.format(code, config.prettier);
-        fs.writeFileSync(path.join(__dirname, `/server/api/${serviceName}.js`), formatted);
+        const serviceCode = `
+            // Auto-generated service: "${serviceName}.js"
+            module.exports = {
+                ${methods.join(',\n\n')}
+            }
+            ;
+        `;
+
+        fs.writeFileSync(`${this.serverDir}/api/${serviceName}-router.js`, prettier.format(routerCode, config.prettier));
+        fs.writeFileSync(`${this.serverDir}/api/${serviceName}.js`, prettier.format(serviceCode, config.prettier));
     }
 
 }
