@@ -12,6 +12,8 @@ Why not have type-safe APIs? The problem with type-less APIs is the inconsistenc
 # Solution: Abstraction
 We, as software engineers are not bound to think of low-level primitives such as URLs, endpoints, GET, POST, PUT, PATCH, and DELETE, request headers, request body, and query string parameters, ...etc. We can make an abstraction that **makes web services's methods feel like local methods**. Consider this:
 
+![Figure1](./img/figure1.png)
+
 - A request to the server is like passing parameters to a function
 - A response from the server is like the return value from the function
 
@@ -27,4 +29,10 @@ Data is defined with types, so that proper types are provided when the code is g
 
 **Note**: The project is still in early stages.
 
-You are more than welcome to contribute.
+## Other Consideration
+- How helpful is this system when frequent changes need to be made to the project?
+- How to make the system not rigid, but flexible and customizable to ther user's needs?
+- How to handle Validation?
+- How to handle Access Control?
+- Logging
+- Error-handling
