@@ -65,6 +65,7 @@ module.exports = {
 
 function APIMethod (serviceName, methodName, req, res) {
     return `
+    ${methodName}Middlewares: [],
     async ${methodName}(${t.defaultParameters(req)}) {
         throw '"${serviceName}.${methodName}" is not implemented';
         //#{ @TODO: Success
@@ -79,8 +80,8 @@ function APIMethod (serviceName, methodName, req, res) {
 
 function httpGet(serviceName, methodName, url, req, res) {
     return `
-    const { ${methodName} } = require('./${serviceName}');
-    router.get('${url}', async (req, res, next) => {
+    const { ${methodName}, ${methodName}Middlewares } = require('./${serviceName}');
+    router.get('${url}', ${methodName}Middlewares, async (req, res, next) => {
         const ${t.destructuring(req)} = req.query;
         const jsonResponse = await ${methodName}(${t.destructuring(req)});
         res.status(200).json(jsonResponse);
@@ -89,8 +90,8 @@ function httpGet(serviceName, methodName, url, req, res) {
 
 function httpPost(serviceName, methodName, url, req, res) {
     return `
-    const { ${methodName} } = require('./${serviceName}');
-    router.post('${url}', async (req, res, next) => {
+    const { ${methodName}, ${methodName}Middlewares } = require('./${serviceName}');
+    router.post('${url}', ${methodName}Middlewares, async (req, res, next) => {
         const ${t.destructuring(req)} = req.body;
         const jsonResponse = await ${methodName}(${t.destructuring(req)});
         res.status(200).json(jsonResponse);
