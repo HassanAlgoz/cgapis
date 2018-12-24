@@ -1,5 +1,5 @@
 # Code Generation From API Specification
-Code generated fro both client- and server-side. **Note**: The project is still in early stages.
+Code generated for both client- and server-side. **Note**: The project is still in early stages.
 
 ## Problems
 ### 1. Client & Server Mistmatch
@@ -38,10 +38,10 @@ So, we would write a `api.json` file which would describe the API in terms of **
 How to do that? Well, generate the same method in both the server and the client, and generate the required low-level code that connects the two. The implementation of the actual method is left to the server of course. This way, the client-side code can see all the parameters needed for any method, and doesn't have to deal with any low-level HTTP code.
 
 ### Auto-completion & Types
-We mentioned auto-completion. But, the language (Javascript) doesn't support types. For that we must use Typescript.
+We mentioned auto-completion. But, the language (Javascript) doesn't support types. For that we might have to use Typescript. Or just rely on the ability of the code editor to infer the types from the parameters' default values.
 
 ### Validation
-It is redundant to do validation both client- and servers-side. We can solve this problem by defining our data types once, and have the program generate all the runtime validation code required. The `ajv` (Another JSON Schema Validato) library would be used for validating schemas. The library implements the JSON-Schema standard, which makes it interoperable with other libraries as well. Custom validation code is a concern that we'll try to address as well.
+It is redundant to do validation both client- and servers-side. We can solve this problem by defining our data types once, and have the program generate all the runtime validation code required. The `ajv` (Another JSON Schema Validator) library would be used for validating schemas. The library implements the JSON-Schema standard, which makes it interoperable with other libraries as well. Custom validation code is a concern that we'll try to address as well.
 
 ## `api.json`
 Currently, the JSON file is formatted like so:
@@ -60,6 +60,6 @@ Currently, the JSON file is formatted like so:
 - Unless the generated code is Typescript code, Code Editors support might be limited to VS Code.
 - Basic Web API Functions
   - Access Control
-  - Loggin
+  - Logging
   - Error-Handling
   - Validation
