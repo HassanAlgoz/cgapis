@@ -54,13 +54,7 @@ const json = {
     },
 };
 
-// {schemas: [json.refs]}
-// ajv.addMetaSchema(require("ajv/lib/refs/json-schema-draft-06.json"));
-const ajv = new Ajv({
-    allErrors: true,
-});
-
-let refs = json.refs;
+const refs = json.refs;
 // Add the "$id" property that is used as a value to "$ref"
 for(const key in refs) {
     refs[key]["$id"] = key;
@@ -77,15 +71,19 @@ refs["$id"] = "refs";
 //         },
 //     ],
 // };
+const ajv = new Ajv({
+    allErrors: true, // check all rules collecting all errors.
+    schemas:   [refs],
+});
 
-let schema = json.services.User.ops.getUsersList.req;
+const reqSchema = json.services.User.ops.getUsersList.req;
 const data = {
     skip:    "",
     limit:   "",
     context: "",
 };
 
-const validate  = ajv.addSchema(refs).compile(schema);
+const validate  = ajv.compile(reqSchema);
 
 
 if (!validate(data)) {
