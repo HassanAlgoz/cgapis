@@ -1,33 +1,24 @@
-const t = require("./templates.js");
-const formatter = require("./formatter")();
+const generateTypes = require("./types-generator/types-generator");
+const formatter = require("./formatter/formatter")();
 const fs = require("fs");
 const path = require("path");
 
+const typesPrefix = "Types";
+const js = require("./templates/js")({typesPrefix});
+
 module.exports = {
 
-    generateFiles(def, {
-        outputDir,
-        apiPath,
-    }) {
+    async generateFiles(spec, {outputDir}) {
         const services = [];
-        for(const serviceName in def.services) {
-            const service = def.services[serviceName];
+        for(const serviceName in spec.services) {
+            const service = spec.services[serviceName];
             const methods = [];
             for(const opName in service.ops) {
                 const op = service.ops[opName];
-                const req = t.initializeObj(op.req, def.types);
-                const res = {
-                    ok:   t.initializeObj(op.res.ok, def.types),
-                    fail: t.initializeObj(op.res.fail, def.types),
-                };
                 // Generate the Fetch Method
                 // Methods starting with "get" are sent as HTTP GET requests with the parameters in the querystring of the URL.
                 // Other methods are sent as HTTP POST requests with the parameters in the body.
-                if (opName.startsWith("get")) {
-                    methods.push(fetchGet(serviceName, opName, `${apiPath}/${serviceName}/${opName}`, req, res));
-                } else {
-                    methods.push(fetchPost(serviceName, opName, `${apiPath}/${serviceName}/${opName}`, req, res));
-                }
+                methods.push(generateRequestMethod(serviceName, opName, op.req, op.res));
             }
             services.push({
                 serviceName: serviceName,
@@ -35,73 +26,47 @@ module.exports = {
             });
         }
 
+        const tsCode = await generateTypes(spec.refs);
+        fs.writeFileSync(path.join(outputDir, "/api-types.ts"), tsCode);
+
         const code = `
             // Auto-generated: PLEASE DO NOT CHANGE FILE
-            function getJSONAsURLEncoded(json) {
-                const params = new URLSearchParams()
-                for (const [key, value] of Object.entries(json)) {
-                    params.append(key, value);
+            import * as ${typesPrefix} from "./api-types"
+
+            export default function ({axios}) {
+                return {
+                    ${services.map(service => `
+                    // Auto-generated service "${service.serviceName}"
+                    ${service.serviceName}: {
+                        ${service.methods.join(",\n")}
+                    }
+                    `).join(",\n")}
                 }
-                return "?" + params.toString();
             }
-            ${services.map(service => `
-                // Auto-generated service "${service.serviceName}"
-                export const ${service.serviceName} = {
-                    ${service.methods.join(",\n")}
-                };
-            `).join("\n")}
         `;
-        fs.writeFileSync(path.join(outputDir, "/api.js"), formatter.format(code));
+        fs.writeFileSync(path.join(outputDir, "/api.ts"), formatter.format(code));
     },
 };
 
-function fetchGet (serviceName, methodName, url, req, res) {
+function generateRequestMethod (serviceName, methodName, req, res) {
+    const isGet = methodName.startsWith("get") || methodName.startsWith("find") || methodName.startsWith("list") || methodName.startsWith("fetch") || methodName.startsWith("search");
     return `
-    ${methodName}(${t.objDefaultParameters(req)}) {
-        return fetch("${url}" + getJSONAsURLEncoded(_obj), {
-            method: "GET",
-            credentials: "same-origin",
-            headers: { "Content-Type": "application/json" }
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                console.error("${serviceName}Service.${methodName} error:", response.statusText());
-            }
-        })
-        .then(json => {
-            const ${t.destructuring(res.ok)} = json;
-            return (${t.destructuring(res.ok)});
-        })
-        .catch(err => {
-            console.error("${serviceName}Service.${methodName} error:", err);
-        });
-    }`;
+    async ${methodName}(${js.keyTypePairs("req", req)}) : Promise<[${js.CST("res", res)}]> {
+        try {
+            const response = await axios({
+                url: "/${serviceName}/${methodName}",
+                ${isGet
+        ? `method: "get", params: {${js.CSP(req)}},`
+        : `method: "post", data: {${js.CSP(req)}},`
 }
-
-function fetchPost(serviceName, methodName, url, req, res) {
-    return `
-    ${methodName}(${t.defaultParameters(req)}) {
-        return fetch("${url}", {
-            method: "POST",
-            body: JSON.stringify(${t.destructuring(req)}),
-            credentials: "same-origin",
-            headers: { "Content-Type": "application/json" },
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                console.error("${serviceName}Service.${methodName} error:", response.statusText());
-            }
-        })
-        .then(json => {
-            const ${t.destructuring(res.ok)} = json;
-            return (${t.destructuring(res.ok)});
-        })
-        .catch(err => {
-            console.error("${serviceName}Service.${methodName} error:", err);
-        });
+            });
+            const res = response.data as {
+                ${js.keyTypePairs("res", res)}
+            };
+            return [res.status, res.users];
+        } catch (err) {
+            // Print a pretty error message
+            console.error(\`${serviceName}Service.${methodName}(\${JSON.stringify({${js.CSP(req)}})}) error:\`, err);
+        }
     }`;
 }

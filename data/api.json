@@ -1,0 +1,77 @@
+{
+    "services": {
+        "User": {
+            "ops": {
+                "getUsersList": {
+                    "req": {
+                        "properties": {
+                            "skip":    { "type": "number" },
+                            "limit":   { "type": "number" },
+                            "context": { "$ref": "Context" },
+                            "people":   {
+                                "type":  "array",
+                                "items": {
+                                    "$ref": "User"
+                                }
+                            }
+                        }
+                    },
+                    "res": {
+                        "properties": {
+                            "status": { "$ref": "Status" },
+                            "users":  {
+                                "type":  "array",
+                                "items": {
+                                    "$ref": "User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    "refs": {
+        "User": {
+            "type": "object",
+            "properties": {
+                "email":    { "type": "string", "format": "email" },
+                "password": { "type": "string", "minLength": 6 },
+                "age":      { "type": "integer", "minimum": 1 }
+            },
+            "additionalProperties": false
+        },
+        "Status": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "enum": [
+                        "OK",
+                        "UNAVAILABLE",
+                        "UNIMPLEMENTED",
+                        "UNAUTHORIZED",
+                        "UNAUTHENTICATED",
+                        "INVALID_PARAMETERS",
+                        "UNKNOWN"
+                    ]
+                },
+                "errors": {
+                    "type":  "array",
+                    "items": { "type": "string" }
+                }
+            },
+            "required": ["code"],
+            "additionalProperties": false
+        },
+        "Context": {
+            "type": "string",
+            "enum": [
+                "list",
+                "details",
+                "CRUD-table"
+            ]
+        }
+    }
+}
