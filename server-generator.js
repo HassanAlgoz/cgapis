@@ -1,34 +1,27 @@
-const t = require("./templates.js");
-const formatter = require("./formatter")();
 const fs = require("fs");
 const path = require("path");
+const generateTypes = require("./types-generator/types-generator");
+const formatter = require("./formatter/formatter")();
+
+const typesPrefix = "Types";
+const js = require("./templates/js")({typesPrefix});
 
 module.exports = {
 
-    generateFiles(def, {
+    async generateFiles({
+        spec,
         outputDir,
         apiPath,
     }) {
         const services = [];
-        for(const serviceName in def.services) {
-            const service = def.services[serviceName];
+        for(const serviceName in spec.services) {
+            const service = spec.services[serviceName];
             const methods = [];
             const routes = [];
             for(const opName in service.ops) {
                 const op = service.ops[opName];
-                const req = t.initializeObj(op.req, def.types);
-                const res = {
-                    ok:   t.initializeObj(op.res.ok, def.types),
-                    fail: t.initializeObj(op.res.fail, def.types),
-                };
-                // Methods starting with "get" are sent as HTTP GET requests with the parameters in the querystring of the URL.
-                // Other methods are sent as HTTP POST requests with the parameters in the body.
-                if (opName.startsWith("get")) {
-                    routes.push(httpGet(serviceName, opName, `${apiPath}/${serviceName}/${opName}`, req, res));
-                } else {
-                    routes.push(httpPost(serviceName, opName, `${apiPath}/${serviceName}/${opName}`, req, res));
-                }
-                methods.push(APIMethod(serviceName, opName, req, res));
+                routes.push(makeRoute(serviceName, opName, `${apiPath}/${serviceName}/${opName}`, op.req, op.res));
+                methods.push(APIMethod(serviceName, opName, op.req, op.res));
             }
             services.push({
                 serviceName: serviceName,
@@ -37,63 +30,55 @@ module.exports = {
             });
         }
 
+        let tsCode = await generateTypes(spec.refs);
+        tsCode = formatter.format(`
+            // AUTO GENERATED
+        `) + "\n" + tsCode;
+        fs.writeFileSync(path.join(outputDir, "/api-types.ts"), tsCode);
+
         const routesCode = `
-            // Auto-generated routes
-            // DO NOT MODIFY THIS FILE
-            const router = require("express").Router();
-            module.exports = router;\n\n
+            // AUTO GENERATED
+            import { Router } from "express";
+            const router = Router();
+            export default router;\n\n
             ${services.map(service => `
                 ${service.routes.join("\n\n")}
             `).join("\n")}
         `;
-        fs.writeFileSync(path.join(outputDir, "/api/routes.js"), formatter.format(routesCode));
+        fs.writeFileSync(path.join(outputDir, "/api/routes.ts"), formatter.format(routesCode));
 
         services.forEach(service => {
             const serviceCode = formatter.format(`
-                // Auto-generated service "${service.serviceName}.js"
-                module.exports = {
-                    ${service.methods.join(",\n\n")}
-                };
-            `)
-                .replace(/\/\/#{/g, "/*")
-                .replace(/\/\/#}/g, "*/");
-            // fs.writeFileSync(path.join(outputDir, "/api", `/${service.serviceName}.js`), formatter.format(serviceCode));
-            fs.writeFileSync(path.join(outputDir, "/api", `/${service.serviceName}.js`), serviceCode);
+                import * as ${typesPrefix} from "./api-types"
+                ${service.methods.join("\n\n")}
+            `);
+            fs.writeFileSync(path.join(outputDir, "/api", `/${service.serviceName}.ts`), serviceCode);
         });
     },
 };
 
 function APIMethod (serviceName, methodName, req, res) {
     return `
-    ${methodName}Middlewares: [],
-    async ${methodName}(${t.defaultParameters(req)}) {
-        throw '"${serviceName}.${methodName}" is not implemented';
-        //#{ @TODO: Success
-        return (${t.defaultReturn(res.ok)});
-        //#}
-
-        //#{ @TODO: Fail
-        return (${t.defaultReturn(res.fail)});
-        //#}
+    export const ${methodName}Middlewares = [];
+    export async function ${methodName}({${js.CSP(req)}}:{${js.keyTypePairs("req", req)}}) : Promise<[${js.CST("res", res)}]> {
+        // @Todo: Implement ${methodName}
+        return [
+            {
+                code: "UNIMPLEMENTED",
+                errors: ['"${serviceName}.${methodName}" is not implemented'],
+            },
+            null
+        ];
     }`;
 }
 
-function httpGet(serviceName, methodName, url, req, res) {
+function makeRoute(serviceName, methodName, url, req, res) {
+    const isGet = methodName.startsWith("get") || methodName.startsWith("find") || methodName.startsWith("list") || methodName.startsWith("fetch") || methodName.startsWith("search");
     return `
-    const { ${methodName}, ${methodName}Middlewares } = require('./${serviceName}');
-    router.get('${url}', ${methodName}Middlewares, async (req, res, next) => {
-        const ${t.destructuring(req)} = req.query;
-        const jsonResponse = await ${methodName}(${t.destructuring(req)});
-        res.status(200).json(jsonResponse);
-    });`;
-}
-
-function httpPost(serviceName, methodName, url, req, res) {
-    return `
-    const { ${methodName}, ${methodName}Middlewares } = require('./${serviceName}');
-    router.post('${url}', ${methodName}Middlewares, async (req, res, next) => {
-        const ${t.destructuring(req)} = req.body;
-        const jsonResponse = await ${methodName}(${t.destructuring(req)});
+    import { ${methodName}, ${methodName}Middlewares } from "./${serviceName}";
+    router.${isGet? "get" : "post"}('${url}', ${methodName}Middlewares, async (req, res) => {
+        const {${js.CSP(req)}} = ${isGet? "req.query" : "req.body"};
+        const jsonResponse = await ${methodName}({${js.CSP(req)}});
         res.status(200).json(jsonResponse);
     });`;
 }
