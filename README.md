@@ -16,10 +16,13 @@ Now, how would you map the following to HTTP verbs?:
 
 My point is, don't bother. Besides, wouldn't it be more practical to deal with methods on objects directly? I will show you how.
 
-### 3. Boilerplate Code
+### 3. HTTP Status Codes Aren't Expressive
+HTTP status codes are predefined. They provide very generic messages. Trying to communicate through status codes is a futile endavor. Instead, we can define application specific status codes (error codes, specifically) that make sense to the client. Afterall, robust systems are designed to handle errors well. That means clients know what errors servers might return, and handle each error accordingly, leaving no errors unhandled.
+
+### 4. Boilerplate Code
 Alot of code on the client side to make requests to specific URLs are just repetetive and prone to error, because there is no automatic checker that tells us whether we made a mistake in the URL, or how the parameter names are not right, or any other detials. We can solve this problem.
 
-### 4. Swagger
+### 5. Swagger
 Swagger "helps developers design, build, document, and consume RESTful Web services". It has a code generator for Javascript and Node.js. But, I have problems with Swagger. its code is unmaintained and so the generated code is old, which also makes it hard to use. I don't like their way of instantiating objects and using AMD. Also, the generated API is not typed. Finally, Swagger's API specification files include more details than I care about. I don't care about the specific URLs and where they are, and I don't care what HTTP status codes are returned because I don't think HTTP's verbs and status codes are expressive enough.
 
 Besides, I want to roll out my own generator, because I want to explore something new.
@@ -37,29 +40,22 @@ So, we would write a `api.json` file which would describe the API in terms of **
 
 How to do that? Well, generate the same method in both the server and the client, and generate the required low-level code that connects the two. The implementation of the actual method is left to the server of course. This way, the client-side code can see all the parameters needed for any method, and doesn't have to deal with any low-level HTTP code.
 
-### Auto-completion & Types
-We mentioned auto-completion. But, the language (Javascript) doesn't support types. For that we might have to use Typescript. Or just rely on the ability of the code editor to infer the types from the parameters' default values.
-
-### Validation
-It is redundant to do validation both client- and servers-side. We can solve this problem by defining our data types once, and have the program generate all the runtime validation code required. The `ajv` (Another JSON Schema Validator) library would be used for validating schemas. The library implements the JSON-Schema standard, which makes it interoperable with other libraries as well. Custom validation code is a concern that we'll try to address as well.
-
 ## `api.json`
 Currently, the JSON file is formatted like so:
 - `services`: like namespaces. For organizing operations together
 - `ops`: methods/functions in a service
 - `req`: describes function parameters
-- `res`: describes function return values. Contains two cases `ok` and `fail` (might change later to consider error types)
-- `types`: defines user-defined data types
+- `res`: describes function return values
+- `refs`: defines user-defined data types
 
 **Note:** because this is under development, many things, including the format of the JSON file, are subject to change.
 
-## Challenges
-- Customizable generator to fit uesrs' needs
+## Imposed Requirements
+- The generated code shall have simple interface
 - Should adapt to changing API specification and reflect changes to both the client and server with no overhead to the user
-- Javascript is weakly typed. Typescript has smaller community compared to Javascript. Its setup is a pain
-- Unless the generated code is Typescript code, Code Editors support might be limited to VS Code.
-- Basic Web API Functions
-  - Access Control
-  - Logging
-  - Error-Handling
-  - Validation
+- The solution shouldn't make anything harder to do (e.g., access control, error-handling, logging, or validation)
+
+
+## Extra
+### Validation
+It is redundant to do validation both client- and servers-side. We can solve this problem by defining our data types once, and have the program generate all the runtime validation code required. The `ajv` (Another JSON Schema Validator) library would be used for validating schemas. The library implements the JSON-Schema standard, which makes it interoperable with other libraries as well. Custom validation code is a concern that we'll try to address as well.
