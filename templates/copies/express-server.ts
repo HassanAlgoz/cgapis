@@ -1,10 +1,10 @@
-const express = require('express');
-const chalk = require('chalk');
-const logger = require('morgan');
-const bodyParser = require('body-parser');
-const compression = require('compression');
-const favicon = require('serve-favicon');
-const path = require('path');
+import express from "express";
+import chalk from "chalk";
+import logger from "morgan";
+import bodyParser from "body-parser";
+import compression from "compression";
+import favicon from "serve-favicon";
+import path from "path";
 
 // Server
 const PORT = process.env.PORT || 3000;

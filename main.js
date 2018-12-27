@@ -28,8 +28,8 @@ async function main() {
     });
 
     fs.copyFileSync(
-        path.join(__dirname, "templates", "copies", "express-server.js"),
-        path.join(config.server_dir, "server.js")
+        path.join(__dirname, "templates", "copies", "express-server.ts"),
+        path.join(config.server_dir, "server.ts")
     );
 
     console.log("Done");
