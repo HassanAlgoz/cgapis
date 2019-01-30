@@ -34,11 +34,11 @@ module.exports = {
         tsCode = formatter.format(`
             // AUTO GENERATED
         `) + "\n" + tsCode;
-        fs.writeFileSync(path.join(outputDir, "/api-types.ts"), tsCode);
+        fs.writeFileSync(path.join(outputDir, "/api/api-types.ts"), tsCode);
 
         const routesCode = `
             // AUTO GENERATED
-            import { Router } from "express";
+            import { Router, Request, Response } from "express";
             const router = Router();
             export default router;\n\n
             ${services.map(service => `
@@ -49,6 +49,7 @@ module.exports = {
 
         services.forEach(service => {
             const serviceCode = formatter.format(`
+                import { RequestHandler } from "express"
                 import * as ${typesPrefix} from "./api-types"
                 ${service.methods.join("\n\n")}
             `);
@@ -59,7 +60,7 @@ module.exports = {
 
 function APIMethod (serviceName, methodName, req, res) {
     return `
-    export const ${methodName}Middlewares = [];
+    export const ${methodName}Middlewares: RequestHandler[] = [];
     export async function ${methodName}({${js.CSP(req)}}:{${js.keyTypePairs("req", req)}}) : Promise<[${js.CST("res", res)}]> {
         // @Todo: Implement ${methodName}
         return [
@@ -76,7 +77,7 @@ function makeRoute(serviceName, methodName, url, req, res) {
     const isGet = methodName.startsWith("get") || methodName.startsWith("find") || methodName.startsWith("list") || methodName.startsWith("fetch") || methodName.startsWith("search");
     return `
     import { ${methodName}, ${methodName}Middlewares } from "./${serviceName}";
-    router.${isGet? "get" : "post"}('${url}', ${methodName}Middlewares, async (req, res) => {
+    router.${isGet? "get" : "post"}('${url}', ${methodName}Middlewares, async (req: Request, res: Response) => {
         const {${js.CSP(req)}} = ${isGet? "req.query" : "req.body"};
         const jsonResponse = await ${methodName}({${js.CSP(req)}});
         res.status(200).json(jsonResponse);

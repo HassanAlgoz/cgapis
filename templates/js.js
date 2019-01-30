@@ -61,9 +61,11 @@ module.exports = function({typesPrefix}) {
             ${Object.keys(obj).map(key => {
         let val = obj[key];
 
-        if (typeof val === "string") val = `"${val}"`;
-        else if (Array.isArray(val)) val = `[${[val.join(",")]}]`;
-
+        if (typeof val === "string") {
+            val = `"${val}"`;
+        } else if (Array.isArray(val)) {
+            val = `[${[val.join(",")]}]`;
+        }
         return `${key}: ${val}`;
     })
         .join(",\n")}
