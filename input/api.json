@@ -32,8 +32,8 @@
         "User": {
             "type": "object",
             "properties": {
-                "email":    { "type": "string", "format": "email" },
-                "password": { "type": "string", "minLength": 6 },
+                "email":    { "type": "string",  "format": "email" },
+                "password": { "type": "string",  "minLength": 6 },
                 "age":      { "type": "integer", "minimum": 1 }
             },
             "additionalProperties": false
@@ -55,7 +55,7 @@
                 },
                 "errors": {
                     "type":  "array",
-                    "items": { "type": "string" }
+                    "items": { "type": "string"}
                 }
             },
             "required": ["code"],
