@@ -7,11 +7,7 @@
                         "properties": {
                             "skip":    { "type": "number" },
                             "limit":   { "type": "number" },
-                            "context": { "$ref": "Context" },
-                            "people":   {
-                                "type":  "array",
-                                "items": { "$ref": "User" }
-                            }
+                            "context": { "$ref": "Context" }
                         }
                     },
                     "res": {

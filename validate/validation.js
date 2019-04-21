@@ -9,31 +9,17 @@ const json = {
                         "properties": {
                             "skip":    { "type": "number" },
                             "limit":   { "type": "number" },
-                            "context": {
-                                "type": "string",
-                                "enum": ["adminTable", "searchPage"],
-                            },
+                            "context": { "$ref": "Context" },
                         },
                     },
                     "res": {
-                        "ok": {
-                            // "type":       "object",
-                            "properties": {
-                                "message": { "type": "string" },
-                                "users":   {
-                                    "type":  "array",
-                                    "items": {
-                                        "$ref": "User",
-                                    },
-                                },
-                            },
-                        },
-                        "fail": {
-                            "properties": {
-                                "message": { "type": "string" },
-                                "error":   {
-                                    "type": "string",
-                                    "enum": ["noUsersExist", "noUsersLeft"],
+                        // "type":       "object",
+                        "properties": {
+                            "status": { "$ref": "Status" },
+                            "users":  {
+                                "type":  "array",
+                                "items": {
+                                    "$ref": "User",
                                 },
                             },
                         },
@@ -42,6 +28,7 @@ const json = {
             },
         },
     },
+
     "refs": {
         "User": {
             // "type":       "object",
@@ -50,6 +37,34 @@ const json = {
                 "password": { "type": "string", "minLength": 6 },
                 "age":      { "type": "integer", "minimum": 1 },
             },
+        },
+        "Status": {
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "enum": [
+                        "OK",
+                        "UNAVAILABLE",
+                        "UNIMPLEMENTED",
+                        "UNAUTHORIZED",
+                        "UNAUTHENTICATED",
+                        "INVALID_PARAMETERS",
+                        "UNKNOWN",
+                    ],
+                },
+                "errors": {
+                    "type":  "array",
+                    "items": { "type": "string" },
+                },
+            },
+        },
+        "Context": {
+            "type": "string",
+            "enum": [
+                "list",
+                "details",
+                "CRUD-table",
+            ],
         },
     },
 };
