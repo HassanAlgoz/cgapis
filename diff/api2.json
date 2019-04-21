@@ -1,0 +1,193 @@
+{
+    "version" : 0.1,
+    "services": {
+        "User": {
+            "description": "",
+            "ops"        : {
+                "getUsersList": {
+                    "access": ["admin", "author", "student"],
+                    "req"   : {
+                        "skip"  : { "type": "number", "required": true },
+                        "limit" : { "type": "number", "required": true },
+                        "select": { "type": "array", "items": { "type": "User" } }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" },
+                            "users"  : { "type": "array", "items": { "type": "User" } }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "getUser": {
+                    "access": ["admin"],
+                    "req"   : {
+                        "id": { "type": "string", "required": true }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" },
+                            "user"   : { "type": "object" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                }
+            }
+        },
+        "Course": {
+            "ops": {
+                "getCoursesList": {
+                    "access": ["admin", "author", "student"],
+                    "req"   : {
+                        "skip"  : { "type": "number" },
+                        "limit" : { "type": "number" },
+                        "select": { "type": "array", "items": { "type": "Course" } }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" },
+                            "courses": { "type": "array", "items": { "type": "Course" } }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "getCourse": {
+                    "access": ["author"],
+                    "req"   : {
+                        "id": { "type": "string" }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" },
+                            "course" : { "type": "Course" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "createCourse": {
+                    "access": ["admin"],
+                    "req"   : {
+                        "title"   : { "type": "string" },
+                        "subtitle": { "type": "string" }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "updateCourse": {
+                    "access": ["admin"],
+                    "req"   : {
+                        "id"      : { "type": "string" },
+                        "title"   : { "type": "string" },
+                        "subtitle": { "type": "string" }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "deleteCourse": {
+                    "access": ["admin"],
+                    "req"   : {
+                        "id": { "type": "string" }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "updateSections": {
+                    "req": {
+                        "id"      : { "type": "string" },
+                        "sections": { "type": "array", "items": { "type": "Section" } }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                },
+                "createNode": {
+                    "req": {
+                        "id": { "type": "string" },
+                        "node": { "type": "Node" }
+                    },
+                    "res": {
+                        "ok": {
+                            "message": { "type": "string" }
+                        },
+                        "fail": {
+                            "message": { "type": "string" },
+                            "errors" : { "type": "array", "items": { "type": "string" } }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "types": {
+        "User": {
+            "id": {"type": "string"},
+            "email"   : { "type": "string" },
+            "password": { "type": "string" },
+            "username": { "type": "string" },
+            "role"    : { "type": "string" }
+        },
+        "Course": {
+            "id": {"type": "string"},
+            "title"      : { "type": "string" },
+            "description": { "type": "string" },
+            "tags"       : { "type": "string" },
+            "image"      : { "type": "string" },
+            "video"      : { "type": "string" },
+            "price"      : { "type": "number" },
+            "students"   : { "type": "array", "items": { "type": "string" } },
+            "authors"    : { "type": "array", "items": { "type": "string" } },
+            "publishDate":  { "type": "string" }
+        },
+        "Section": {
+            "title": { "type": "string" },
+            "nodes": { "type": "array", "items": { "type": "Node" } }
+        },
+        "Node": {
+            "title"      : { "type": "string"  },
+            "type"       : { "type": "string"  },
+            "body"       : { "type": "string"  },
+            "url"        : { "type": "string"  },
+            "time"       : { "type": "string"  },
+            "previewable": { "type": "boolean" }
+        }
+    }
+}
