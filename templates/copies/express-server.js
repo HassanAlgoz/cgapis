@@ -1,11 +1,11 @@
-import bodyParser from "body-parser";
-import chalk from "chalk";
-import compression from "compression";
-import express from "express";
-import logger from "morgan";
+const bodyParser = require("body-parser");
+const chalk = require("chalk");
+const compression = require("compression");
+const express = require("express");
+const logger = require("morgan");
 
 // Routes
-import APIRouter from "./api/routes";
+const APIRouter = require("./api/routes");
 
 // Server
 const PORT = process.env.PORT || 3000;

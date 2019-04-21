@@ -19,22 +19,20 @@ const spec = parser.parse(fs.readFileSync(config.api_spec_file));
 
 async function main() {
     let t = ticker.tick("Generating client files...");
-    await clientGenerator.generateFiles({
-        spec:      spec,
+    await clientGenerator(spec).generateFiles({
         outputDir: config.client_dir,
     });
     t.tock();
 
     t = ticker.tick("Generating server files...");
-    await serverGenerator.generateFiles({
-        spec:      spec,
+    await serverGenerator(spec).generateFiles({
         outputDir: config.server_dir,
         apiPath:   config.api_path,
     });
 
     fs.copyFileSync(
-        path.join(__dirname, "templates", "copies", "express-server.ts"),
-        path.join(config.server_dir, "server.ts")
+        path.join(__dirname, "templates", "copies", "express-server.js"),
+        path.join(config.server_dir, "server.js")
     );
     t.tock();
 

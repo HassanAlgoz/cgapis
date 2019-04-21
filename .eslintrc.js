@@ -92,7 +92,7 @@ module.exports = {
             "maxEOF": 2,
         }],
         "implicit-arrow-linebreak": ["warn", "beside"],
-        "newline-per-chained-call": ["error"],
+        "newline-per-chained-call": ["none"],
         "yoda": ["error", "never", {
             exceptRange: true
         }],
