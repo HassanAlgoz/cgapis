@@ -1,16 +1,14 @@
 const fs = require("fs");
 const path = require("path");
-const js = require("./templates/js");
 
 module.exports = function({config, spec}) {
-    const jsFormatter = require("./formatter/formatter");
     let lang = null;
     
     switch(config.lang.toLowerCase()) {
         case "js":
         case "javascript": {
-            lang = js({config, spec})
-            formatter = jsFormatter({config, spec})
+            lang = require("./templates/js")({config, spec})
+            formatter = require("./formatter/js")({config, spec})
         } break;
     }
 
