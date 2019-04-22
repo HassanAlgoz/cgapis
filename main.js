@@ -3,7 +3,7 @@ const path = require("path");
 
 const parser = require("./parser/parser");
 const clientGen = require("./client-generator");
-// const serverGen = require("./server-generator");
+const serverGen = require("./server-generator");
 
 async function main() {
 
@@ -21,14 +21,11 @@ async function main() {
     // 5.1 Client Code
     await clientGen({config, spec}).generateFiles();
     // 5.2 Server Code
-    // await serverGen({config, spec}).generateFiles({
-    //     outputDir: config.server_dir,
-    //     apiRelativeURL:   config.api_relative_url,
-    // });
-    // fs.copyFileSync(
-    //     path.join(__dirname, "templates", "copies", "express-server.js"),
-    //     path.join(config.server_dir, "server.js")
-    // );
+    await serverGen({config, spec}).generateFiles();
+    fs.copyFileSync(
+        path.join(__dirname, "templates", "copies", "express-server.js"),
+        path.join(config.server_dir, "server.js")
+    );
 }
 main();
 

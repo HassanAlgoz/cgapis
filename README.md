@@ -7,7 +7,9 @@ node main.js                        \
     --spec        ./input/api.json  \
     --server-dir  ./output/server   \
     --client-dir  ./output/client   \
-    --api-version v1
+    --api-version v1                \
+    --client-lang javascript        \
+    --server-lang nodejs
 ```
 
 ## Problems

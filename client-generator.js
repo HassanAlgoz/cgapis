@@ -2,13 +2,13 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = function({config, spec}) {
-    let lang = null;
+    let client = null;
     let formatter = null;
     
-    switch(config.lang.toLowerCase()) {
+    switch(config.client_lang.toLowerCase()) {
         case "js":
         case "javascript": {
-            lang = require("./templates/js")({config, spec})
+            client = require("./templates/js")({config, spec}).client
             formatter = require("./formatter/js")({config, spec})
         } break;
     }
@@ -21,7 +21,7 @@ module.exports = function({config, spec}) {
                 const methods = [];
                 for(const opName in service.ops) {
                     const op = service.ops[opName];
-                    const methodCode = lang.generateClientRequestMethod(serviceName, opName, op.req, op.res)
+                    const methodCode = client.generateRequestMethod(serviceName, opName, op.req, op.res)
                     methods.push(methodCode);
                 }
                 services.push({
@@ -30,7 +30,7 @@ module.exports = function({config, spec}) {
                 });
             }
 
-            const APICode = lang.groupServiceOperations(services)
+            const APICode = client.groupServiceOperations(services)
             const formattedAPICode = formatter.format(APICode)
             fs.writeFileSync(path.join(config.client_dir, "/api.js"), formattedAPICode, {encoding: 'utf8'});
         },
