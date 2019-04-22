@@ -57,15 +57,14 @@ Currently, the JSON file is formatted like so:
 - `ops`: methods/functions in a service
 - `req`: describes function parameters. (`req` is short for request)
 - `res`: describes function return values. (`res` is short for response)
-- `refs`: defines user-defined data types
+- `refs`: defines user-defined data types (yet to be implemented)
 
 **Note:** because this is under development, many things, including the format of the JSON file, are subject to change.
 
 ## Imposed Requirements
-- Simplicity is paramount. The generated code shall have a simple interface.
-- Should adapt to changing API specification and reflect changes to both the client and server with no overhead to the user. It is the nature of design to keep adjusting over and over again.
-- The solution shouldn't make anything harder to do (e.g., access control, error-handling, logging, or validation). Only easier.
-- The solution shall be customizable to users' needs.
+- The solution shall not make anything harder to do (e.g., access control, error-handling, logging, or validation). Only easier and simpler.
+- The solution shall adapt to changes in api specs. (see the `diff` tool)
+- The solution shall be customizable to users' needs. (client language, server language, maybe frameworks, ..etc)
 
 
 ## Extra
