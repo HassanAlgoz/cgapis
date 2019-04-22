@@ -15,7 +15,7 @@ module.exports = {
         }
     },
     "overrides": [{ // Browser Environment
-        "files": ["client/**/*.js"],
+        "files": ["output/client/**/*.js"],
         "env": {
             "browser": true,
             "jquery": true,

@@ -1,11 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 const generateTypes = require("./types-generator/types-generator");
-const formatter = require("./formatter/formatter")();
 
-const js = require("./templates/js")();
+module.exports = function({config, spec}) {
 
-module.exports = function(spec) {
+    const js = require("./templates/js")({config, spec});
+    const formatter = require("./formatter/formatter")();
 
     return {
         async generateFiles({
