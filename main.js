@@ -27,7 +27,7 @@ async function main() {
     t = ticker.tick("Generating server files...");
     await serverGenerator(spec).generateFiles({
         outputDir: config.server_dir,
-        apiPath:   config.api_path,
+        apiPath:   config.api_relative_url,
     });
 
     fs.copyFileSync(

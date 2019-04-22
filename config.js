@@ -2,10 +2,10 @@ const path = require("path");
 const program = require("commander");
 
 const config = {
-    server_dir:    path.join(__dirname, "/output/server"),
-    client_dir:    path.join(__dirname, "/output/client"),
-    api_spec_file: path.join(__dirname, "/input/api.json"),
-    api_path:      "/api/v1",
+    server_dir:       path.join(__dirname, "/output/server"),
+    client_dir:       path.join(__dirname, "/output/client"),
+    api_spec_file:    path.join(__dirname, "/input/api.json"),
+    api_relative_url: "/api/v1",
 };
 
 program
@@ -23,7 +23,7 @@ if (!process.argv.slice(2).length) {
 }
 
 if (program["spec"]) config.api_spec_file = path.normalize(program["spec"]);
-if (program["apiVersion"]) config.api_path = "/api/" + program["apiVersion"];
+if (program["apiVersion"]) config.api_relative_url = "/api/" + program["apiVersion"];
 if (program["serverDir"]) config.server_dir = path.normalize(program["serverDir"]);
 if (program["clientDir"]) config.client_dir = path.normalize(program["clientDir"]);
 
