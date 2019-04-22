@@ -3,6 +3,7 @@ const path = require("path");
 
 module.exports = function({config, spec}) {
     let lang = null;
+    let formatter = null;
     
     switch(config.lang.toLowerCase()) {
         case "js":
