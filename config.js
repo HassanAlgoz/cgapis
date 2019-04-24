@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require("path");
 const program = require("commander");
 
@@ -10,8 +11,10 @@ const config = {
     server_lang: "nodejs",
 };
 
+const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json')))
+
 program
-    .version("0.1.0")
+    .version(packageJSON.version)
     .description("Generates client-side & server-side code from a specification file")
     .option("-p, --spec <*.json>", "API specification file")
     .option("-a, --api-version <version>", "API Version")

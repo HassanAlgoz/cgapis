@@ -3,7 +3,7 @@ Code generated for both client- and server-side. **Note**: The project is still 
 
 ## Run
 ```bash
-node main.js                        \
+node index.js                       \
     --spec        ./input/api.json  \
     --server-dir  ./output/server   \
     --client-dir  ./output/client   \
