@@ -3,9 +3,9 @@ const path = require("path");
 const program = require("commander");
 
 const config = {
-    server_dir:       path.join(__dirname, "/output/server"),
-    client_dir:       path.join(__dirname, "/output/client"),
-    api_spec_file:    path.join(__dirname, "/input/api.json"),
+    server_dir:       path.join(process.cwd(), "/generated/server"),
+    client_dir:       path.join(process.cwd(), "/generated/client"),
+    api_spec_file:    path.join(process.cwd(), "api.json"),
     api_relative_url: "/api/v1",
     client_lang: "javascript",
     server_lang: "nodejs",

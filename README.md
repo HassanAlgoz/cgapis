@@ -1,18 +1,34 @@
 # Code Generation From API Specification
 Code generated for both client- and server-side. **Note**: The project is still in early stages.
 
-## Run
+## Install
 ```bash
-node index.js                       \
-    --spec        ./input/api.json  \
-    --server-dir  ./output/server   \
-    --client-dir  ./output/client   \
-    --api-version v1                \
-    --client-lang javascript        \
-    --server-lang nodejs
+npm install -g cgapis
 ```
 
-## Problems
+## Usage
+```bash
+cgapis --spec api.json
+```
+
+Generates this:
+```
+└───generated
+    ├───client
+    └───server
+        └───api
+```
+
+## Other Options
+```bash
+--server-dir  ./generated/server  \
+--client-dir  ./generated/client  \
+--api-version v1                  \
+--client-lang javascript          \
+--server-lang nodejs
+```
+
+## A Solution to These Problems
 ### 1. Client & Server Mistmatch
 REST over HTTP doesn't gaurantee API synchronization between the server and the clients. Changes made to the API on the server have to be reflected at each client. This is done manually, which wastes time, and is boring. We can automate that. Also, the API has to be clearly defined and agreed upon by both client-side and server-side developers. This eliminates any conflicts that would otherwise arise later on.
 
@@ -25,7 +41,7 @@ Now, how would you map the following to HTTP verbs?:
 3. Increment/Decrement likes/dislikes on a course
 4. Add a comment to a node
 
-Developers views on this would vary, simply because there are actually many ways to do this. My point is, don't bother. Besides, wouldn't it be more practical to deal with methods on objects directly? I will show you how.
+Developers views on this would vary, simply because there are many ways to do this. My point is, don't bother. Besides, wouldn't it be more practical to deal with methods on objects directly?.
 
 ### 3. HTTP Status Codes Aren't Expressive
 HTTP status codes are predefined generic messages. Trying to communicate through status codes is a futile endavor. Instead, we can define application specific status codes (error codes, specifically) that make sense to the client, and are discoverable through auto-completion. Afterall, robust systems are designed to handle errors well. That means clients know what errors servers might return, and handle each error accordingly, leaving no errors unhandled!.
@@ -40,16 +56,12 @@ Besides, I want to roll out my own generator, because I want to explore somethin
 
 ## Solution
 ### Code Generation From API Specification
-Abstract the low-level code, and write the required boilerplate code. Let the user deal with the API directly, calling methods, and getting return values.
-
-So, we would write a `api.json` file which would describe the API in terms of **services** and **data**, much like **methods** and **parameters**. We, as software engineers are not bound to think of low-level primitives such as URLs, endpoints, GET, POST, PUT, PATCH, DELETE, request headers, request body, query string parameters, ...etc. We can make an abstraction that **makes web services's methods feel like local methods**. That is, you can get auto completion when writing client-side code that would make requests to the server to `return` data, that you know in advance its type/structure. Much like RPC.
+Abstract the low-level code, and write the required boilerplate code. Let the user deal with the API directly, calling methods, and getting return values, as if doing RPC. Just write `api.json`, a declaration of the API in terms of **services** and **data**, much like **methods** and **parameters**. Abstracting away the low-level primitives such as URL endpoints, HTTP methods, request headers and body, query strings, ...etc.
 
 ![Figure1](./img/figure1.png)
 
 - A request to the server is like passing parameters to a function
 - A response from the server is like the return value from the function
-
-How to do that? Well, generate the same method in both the server and the client, and generate the required low-level code that connects the two. The implementation of the actual method is left to the server of course. This way, the client-side code can see all the parameters needed for any method, and doesn't have to deal with any low-level HTTP code. Plus, you get a strongly typed API.
 
 ## `api.json`
 Currently, the JSON file is formatted like so:

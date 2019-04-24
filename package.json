@@ -1,8 +1,9 @@
 {
   "name": "cgapis",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "description": "Generate API code for [any] client and [any] server from the API spec file",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js --spec ./input/api.json --server-dir  ./output/server  --client-dir  ./output/client  --api-version v1 --client-lang javascript --server-lang nodejs"
