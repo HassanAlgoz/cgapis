@@ -21,6 +21,9 @@
     "http",
     "rest"
   ],
+  "repository": {
+    "url": "https://github.com/HassanAlgoz/cgapis"
+  },
   "author": "Hassan Algoz",
   "license": "MIT",
   "dependencies": {
