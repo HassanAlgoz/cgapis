@@ -1,5 +1,5 @@
 {
-  "name": "gcapis",
+  "name": "cgapis",
   "version": "0.0.1",
   "description": "Generate API code for [any] client and [any] server from the API spec file",
   "main": "index.js",
