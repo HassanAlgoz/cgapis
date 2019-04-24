@@ -22,7 +22,7 @@
     "rest"
   ],
   "author": "Hassan Algoz",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "ajv": "^6.6.2",
     "array-operations": "^1.1.0",
