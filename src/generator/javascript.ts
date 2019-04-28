@@ -1,8 +1,6 @@
 import LanguageGenerator from "./interface"
-import {SpecSchema} from "../../parser/interface"
-import {Config} from "../../config"
 
-export default function({config, spec} :{config :Config, spec :SpecSchema} ) :LanguageGenerator {
+export default function() :LanguageGenerator {
 
     return {
         client: {
