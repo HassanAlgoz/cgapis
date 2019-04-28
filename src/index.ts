@@ -1,22 +1,24 @@
 #!/usr/bin/env node
 
-const fs = require("fs-extra");
-const path = require("path");
+import * as fs from "fs-extra";
+import * as path from "path";
 
-const parser = require("./parser/parser");
-const clientGen = require("./client-generator");
-const serverGen = require("./server-generator");
+import parser from "./parser/json"
+import clientGen from "./generator/client-generator"
+import serverGen from "./generator/server-generator"
+
+import {Config} from "./config"
 
 async function main() {
 
     // 1. Read Configuration File -----------------------------------------------------------------
-    const config = require("./config");
+    const config :Config = require("./config");
     console.log("config:-\n", config);
     // 2. Ensure directories exist
     fs.ensureDirSync(path.join(config.server_dir, "/api"));
     fs.ensureDirSync(config.client_dir);
     // 3. Parse Schema File -----------------------------------------------------------------------
-    const spec = parser.parse(fs.readFileSync(config.api_spec_file));
+    const spec = parser.parse(fs.readFileSync(config.api_spec_file, {encoding: "utf8"}).toString());
     // 4. Validate Schema -------------------------------------------------------------------------
     // @Todo: Validate Schema
     // 5. Generate Code ---------------------------------------------------------------------------

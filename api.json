@@ -13,10 +13,10 @@
                     "res": {
                         "type": "object",
                         "properties": {
-                            "status": { "$ref": "Status" },
+                            "status": { "type": "string" },
                             "data":  {
                                 "type":  "array",
-                                "items": { "$ref": "User" }
+                                "items": { "type": "string" }
                             }
                         }
                     }

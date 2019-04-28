@@ -25,7 +25,7 @@ Generates this:
 --client-dir  ./generated/client  \
 --api-version v1                  \
 --client-lang javascript          \
---server-lang nodejs
+--server-lang javascript
 ```
 
 ## A Solution to These Problems

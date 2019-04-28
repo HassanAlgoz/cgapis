@@ -1,4 +1,8 @@
-module.exports = function({config, spec}) {
+import LanguageGenerator from "./interface"
+import {SpecSchema} from "../../parser/interface"
+import {Config} from "../../config"
+
+export default function({config, spec} :{config :Config, spec :SpecSchema} ) :LanguageGenerator {
 
     return {
         client: {
@@ -22,14 +26,14 @@ module.exports = function({config, spec}) {
                 }`;
             },
     
-            groupServiceOperations(services=[]) {
+            groupServiceOperations(services) {
                 return `
                 // AUTO GENERATED
                 export default function (axios) {
                     return {
                         ${services.map(s => `
-                        ${s.serviceName}: {
-                            ${s.methods.join(",\n")}
+                        ${s["serviceName"]}: {
+                            ${s["methods"].join(",\n")}
                         }
                         `).join(",\n")}
                     }
@@ -49,7 +53,7 @@ module.exports = function({config, spec}) {
                 });`;
             },
     
-            APIMethod (serviceName, methodName, req, res) {
+            APIMethod(serviceName, methodName, req, res) {
                 return `
                 module.exports.${methodName}Middlewares = [];
                 module.exports.${methodName} = async function (${initializedArgs("req", req)}) {
@@ -64,13 +68,13 @@ module.exports = function({config, spec}) {
                 }`;
             },
 
-            groupServiceRoutes(services=[]) {
+            groupServiceRoutes(services) {
                 return `
                 // AUTO GENERATED
                 const router = require('express').Router();
                 module.exports = router;\n\n
                 ${services.map(service => `
-                    ${service.routes.join("\n\n")}
+                    ${service["routes"].join("\n\n")}
                 `).join("\n")}
             `
             }
@@ -81,7 +85,7 @@ module.exports = function({config, spec}) {
         if (obj.hasOwnProperty('properties')) {
             return `{${Object.keys(obj['properties']).map(k => initializedArgs(k, obj['properties'][k])).join(',')}}`
         }
-        let val = null;
+        let val = "";
         if (obj["default"]) {
             // Check type of default with 'type'
             if (obj.hasOwnProperty("type") && typeof obj.default !== obj.type) {
