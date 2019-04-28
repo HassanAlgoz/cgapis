@@ -1,10 +1,9 @@
 {
   "name": "cgapis",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Generate API code for any client and any server from the API spec file",
-  "main": "dist/index",
-  "bin": "dist/index",
-  "typings": "dist/index",
+  "main": "dist/index.js",
+  "bin": "dist/index.js",
   "files": [
     "dist/**/*"
   ],
