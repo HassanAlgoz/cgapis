@@ -1,9 +1,7 @@
-import * as prettier from "prettier"
+const prettier = require("prettier")
 
-import Formatter from './interface'
-
-const formatter :Formatter = {
-    format(src: string): string {
+module.exports = {
+    format(src) {
         return prettier.format(src, {
             parser:        "typescript",
             tabWidth:      4,
@@ -12,4 +10,3 @@ const formatter :Formatter = {
         });
     }
 }
-export default formatter;

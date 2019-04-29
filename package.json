@@ -1,22 +1,14 @@
 {
   "name": "cgapis",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "Generate API code for any client and any server from the API spec file",
-  "main": "dist/index.js",
-  "bin": "dist/index.js",
-  "files": [
-    "dist/**/*"
-  ],
+  "main": "index.js",
+  "bin": "index.js",
   "scripts": {
-    "prepublishOnly": "npm run compile",
-    "compile": "npm run clean && tsc -p .",
-    "watch": "tsc -w -p .",
-    "clean": "rm -rf dist",
-    "start": "node dist/index.js --spec ./dist/input/api.json --server-dir  ./dist/output/server  --client-dir  ./dist/output/client  --api-version v1 --client-lang javascript --server-lang nodejs",
+    "start": "node index.js --spec ./api.json --server-dir  ./generated/server  --client-dir  ./generated/client  --api-version v1 --client-lang javascript --server-lang nodejs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@types/fs-extra": "^5.0.5",
     "ajv": "^6.6.2",
     "array-operations": "^1.1.0",
     "axios": "^0.18.0",
@@ -32,10 +24,6 @@
     "morgan": "^1.9.1",
     "prettier": "^1.15.3",
     "serve-favicon": "^2.5.0"
-  },
-  "devDependencies": {
-    "@types/node": "^11.13.8",
-    "typescript": "^3.4.5"
   },
   "keywords": [
     "api",

@@ -1,4 +1,4 @@
-const Ajv = require("ajv");
+const Ajv = require("ajv")
 
 const json = {
     "services": {
@@ -67,15 +67,15 @@ const json = {
             ],
         },
     },
-};
+}
 
-const refs = json.refs;
+const refs = json.refs
 // Add the "$id" property that is used as a value to "$ref"
 for(const key in refs) {
-    refs[key]["$id"] = key;
+    refs[key]["$id"] = key
 }
 // Add the mandatory "$id" property to the refs object
-refs["$id"] = "refs";
+refs["$id"] = "refs"
 
 // let schema = json.services.User.ops.getUsersList.res.ok;
 // const data = {
@@ -89,34 +89,34 @@ refs["$id"] = "refs";
 const ajv = new Ajv({
     allErrors: true, // check all rules collecting all errors.
     schemas:   [refs],
-});
+})
 
-const reqSchema = json.services.User.ops.getUsersList.req;
+const reqSchema = json.services.User.ops.getUsersList.req
 const data = {
     skip:    "",
     limit:   "",
     context: "",
-};
+}
 
-const validate  = ajv.compile(reqSchema);
+const validate  = ajv.compile(reqSchema)
 
 
 if (!validate(data)) {
-    const errors = [];
+    const errors = []
     // console.log(validate.errors);
     for(const err of validate.errors) {
-        const dataPath = err.dataPath.substring(1);
+        const dataPath = err.dataPath.substring(1)
         if (err.keyword === "enum") {
-            const enumValues = err.params.allowedValues.map(v => `"${v}"`).join(", ");
-            errors.push(dataPath + " " + err.message + ": " + enumValues);
+            const enumValues = err.params.allowedValues.map(v => `"${v}"`).join(", ")
+            errors.push(dataPath + " " + err.message + ": " + enumValues)
             continue;
         }
-        errors.push(dataPath + " " + err.message);
+        errors.push(dataPath + " " + err.message)
     }
-    console.log(errors.join("\n"));
+    console.log(errors.join("\n"))
 
 } else {
-    console.log("OK");
+    console.log("OK")
 }
 
 

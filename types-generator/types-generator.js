@@ -1,4 +1,3 @@
-// import { compile } from 'json-schema-to-typescript'
 const {compile} = require("json-schema-to-typescript");
 
 async function generate(refs) {
