@@ -57,14 +57,11 @@ module.exports = {
 			return `
             module.exports.${methodName}Middlewares = [];
             module.exports.${methodName} = async function (${utils.initializedArgs("req", req)}) {
-                // @Todo: Implement ${methodName}
-                return [
-                    {
-                        code: "UNIMPLEMENTED",
-                        errors: ['"${serviceName}.${methodName}" is not implemented'],
-                    },
-                    ${utils.initializedArgs("res", res)}
-                ];
+				// @Todo: Implement ${methodName}
+				// Example: error return
+				return [{ code: "UNIMPLEMENTED", errors: ['"${serviceName}.${methodName}" is not implemented'] }];
+				// Example: ok return
+				return [{ code: "OK" }, {${utils.CSP(res)}} ];
             }`
 		}
     
