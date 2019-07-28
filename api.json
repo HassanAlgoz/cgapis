@@ -13,8 +13,7 @@
                     "res": {
                         "type": "object",
                         "properties": {
-                            "status": { "type": "string" },
-                            "data":  {
+                            "users":  {
                                 "type":  "array",
                                 "items": { "type": "string" }
                             }
