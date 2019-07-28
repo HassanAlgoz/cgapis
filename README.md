@@ -24,8 +24,8 @@ Generates this:
 --server-dir  ./generated/server  \
 --client-dir  ./generated/client  \
 --api-version v1                  \
---client-lang javascript          \
---server-lang javascript
+--client-lang javascript-axios    \
+--server-lang javascript-express
 ```
 
 ## A Solution to These Problems

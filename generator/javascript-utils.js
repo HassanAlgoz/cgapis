@@ -1,6 +1,6 @@
 module.exports = {
 
-	/** destructured object argument with initial values set */
+	/** destructured object argument with initial values set with an assignment operator */
 	initializedArgs(key, obj) {
 		if (obj.hasOwnProperty("properties")) {
 			return `{${Object.keys(obj["properties"]).map(k => this.initializedArgs(k, obj["properties"][k])).join(",")}}`
