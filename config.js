@@ -19,7 +19,14 @@ program
 	.option("-C, --client-dir <path>", "Directory for the generated client-side code")
 	.option("-c, --client-lang <lang-framework>", "client language and framework")
 	.option("-s, --server-lang <lang-framework>", "server language and framework")
-	.parse(process.argv)
+	
+const diff = require("./diff/diff")
+program.command("diff <api1.json> <api2.json>")
+	.action((f1, f2) => {
+		diff(f1, f2)
+	})
+
+program.parse(process.argv)
 
 if (!process.argv.slice(2).length) {
 	program.outputHelp((str) => str)
