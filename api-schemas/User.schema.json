@@ -10,7 +10,7 @@
         "age":      { "type": "integer", "minimum": 9, "maximum": 99 },
         "location": {
             "description": "Coordinates of the warehouse where the product is located.",
-            "$ref": "https://example.com/location.schema.json"
+            "$ref": "Location.schema.json"
         }
 
     },

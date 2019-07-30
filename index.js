@@ -3,12 +3,13 @@
 const fs = require("fs-extra");
 const path = require("path");
 
+const config = require("./config");
 const spec = require("./spec");
+
 require("./cmd");
 
 async function main() {
     // 1. Read Configuration File -----------------------------------------------------------------
-    const config = require("./config");
     console.log("config:-\n", config);
     // 2. Ensure directories exist
     fs.ensureDirSync(path.join(config.server_dir, "/api"));
@@ -45,6 +46,10 @@ async function main() {
             apiRelativeURL: config.api_relative_url,
         });
     })();
+
+    // 6 Generate Types
+    const tgen = require("./types-generator/types-generator");
+    await tgen();
 }
 main();
 

@@ -1,15 +1,29 @@
 const {compile} = require("json-schema-to-typescript");
+const fs = require("fs");
+const path = require("path");
 
-async function generate(refs) {
-    let result = [];
-    let promises = [];
-    for(const r in refs) {
-        refs[r].title = r;
-        // refs[r].id = r;
-        promises.push(compile(refs[r], r, {
-            bannerComment: false,
+const config = require("../config");
+const spec = require("../spec");
+
+async function generate() {
+    const result = [];
+    const promises = [];
+
+    for(const sKey in spec.schemas) {
+        const schema = spec.schemas[sKey];
+        promises.push(compile(schema, sKey, {
+            bannerComment:    true,
+            enableConstEnums: true,
+            cwd:              config.schemas_dir,
+            style:            {
+                parser:        "typescript",
+                tabWidth:      4,
+                trailingComma: "all",
+                semi:          true,
+            },
         }));
     }
+
     try {
         for await(const p of promises) {
             result.push(p);
@@ -17,7 +31,13 @@ async function generate(refs) {
     } catch (err) {
         console.error(err);
     }
-    return result.join("\n");
+
+    fs.writeFile(path.join(config.server_dir, "/api", "types.ts"), result.join("\n"), { encoding: "utf8" }, (err) => {
+        if (err) return console.error(err);
+    });
+    fs.writeFile(path.join(config.client_dir, "types.ts"), result.join("\n"), { encoding: "utf8" }, (err) => {
+        if (err) return console.error(err);
+    });
 }
 
 
