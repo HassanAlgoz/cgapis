@@ -12,7 +12,7 @@ async function generate() {
     for(const sKey in spec.schemas) {
         const schema = spec.schemas[sKey];
         promises.push(compile(schema, sKey, {
-            bannerComment:    true,
+            bannerComment:    false,
             enableConstEnums: true,
             cwd:              config.schemas_dir,
             style:            {
