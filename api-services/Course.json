@@ -1,0 +1,77 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    
+    "Course": {
+        "getList": {
+            "req": {
+                "properties":  {
+                    "skip":    { "type": "number", "default": 0  },
+                    "limit":   { "type": "number", "default": 10 },
+                    "context": { "$ref": "DataContext" }
+                }
+            },
+            "res": {
+                "properties": {
+                    "courses":  {
+                        "type":  "array",
+                        "items": {
+                            "$ref": "Course"
+                        }
+                    }
+                }
+            }
+        },
+
+        "getOne": {
+            "req": {
+                "properties":  {
+                    "id":    { "type": "string" }
+                }
+            },
+            "res": {
+                "properties": {
+                    "course":  { "$ref": "Course" }
+                }
+            }
+        },
+
+        "create": {
+            "req": {
+                "properties":  {
+                    "course": { "$ref": "Course" }
+                }
+            },
+            "res": {
+                "properties": {
+                    "id": { "type": "string" }
+                }
+            }
+        },
+
+        "update": {
+            "req": {
+                "properties":  {
+                    "course": { "$ref": "Course" }
+                }
+            }
+        },
+
+        "addStudent": {
+            "req": {
+                "properties":  {
+                    "id": { "type": "string" },
+                    "student": { "$ref": "User" }
+                }
+            }
+        },
+
+        "removeStudent": {
+            "req": {
+                "properties":  {
+                    "id": { "type": "string" },
+                    "studentID": { "type": "string" }
+                }
+            }
+        }
+    }
+}

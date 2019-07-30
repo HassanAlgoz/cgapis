@@ -1,0 +1,19 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "Specification of the user schema",
+    "type": "object",
+
+    "properties": {
+
+        "email":    { "type": "string",  "format": "email" },
+        "password": { "type": "string",  "minLength": 6 },
+        "age":      { "type": "integer", "minimum": 9, "maximum": 99 },
+        "location": {
+            "description": "Coordinates of the warehouse where the product is located.",
+            "$ref": "https://example.com/location.schema.json"
+        }
+
+    },
+    "required": ["email", "password", "age"],
+    "additionalProperties": false
+}
