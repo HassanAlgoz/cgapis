@@ -34,7 +34,7 @@ module.exports = {
 
         function generateRequestMethod(serviceName, methodName, req, res) {
             return `
-            async ${methodName}(${js.initializedArgs("req", req)}) {
+            async ${methodName}(${js.initializedArgs("req", req, "=")}) {
                 try {
                     const response = await axios({
                         url: "/${serviceName}/${methodName}",

@@ -48,10 +48,11 @@ for (const sKey in services) {
         op["res"]["properties"] = {
             "status": { "$ref": "Status" },
             "data":   {
-                "type": "object",
-                ...op["res"]["properties"],
+                "type":       "object",
+                "properties": op["res"]["properties"],
             },
         };
+        // console.log(op["res"]["properties"]);
 
         // Add "$schema" to service ops' req and res
         // op.req["$schema"] = "http://json-schema.org/draft-07/schema"

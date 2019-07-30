@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "Specification of the course schema",
+    "type": "object",
+
+    "properties": {
+
+        "name":       { "type": "string",  "format": "email" },
+        "studentIDs": { "type": "array", "items": { "type": "string" } }
+
+    },
+    "additionalProperties": false
+}

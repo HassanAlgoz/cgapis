@@ -59,9 +59,9 @@ module.exports = {
         function APIMethod(serviceName, methodName, req, res) {
             return `
             module.exports.${methodName}Middlewares = [];
-            module.exports.${methodName} = async function (${js.initializedArgs("req", req)}) {
+            module.exports.${methodName} = async function (${js.initializedArgs("req", req, "=")}) {
 				// @Todo: Implement ${methodName}
-				return ${js.initializedObject("res", res)};
+				return null;
             }`;
         }
 
