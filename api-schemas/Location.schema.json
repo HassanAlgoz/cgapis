@@ -19,6 +19,6 @@
             "maximum": 180
         }
         
-    }
-    
+    },
+    "additionalProperties": false    
 }

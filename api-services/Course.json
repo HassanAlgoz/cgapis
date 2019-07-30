@@ -7,7 +7,7 @@
                 "properties":  {
                     "skip":    { "type": "number", "default": 0  },
                     "limit":   { "type": "number", "default": 10 },
-                    "context": { "$ref": "DataContext" }
+                    "context": { "$ref": "#DataContext" }
                 }
             },
             "res": {
@@ -15,7 +15,7 @@
                     "courses":  {
                         "type":  "array",
                         "items": {
-                            "$ref": "Course"
+                            "$ref": "Course.schema.json"
                         }
                     }
                 }
@@ -30,7 +30,7 @@
             },
             "res": {
                 "properties": {
-                    "course":  { "$ref": "Course" }
+                    "course":  { "$ref": "Course.schema.json" }
                 }
             }
         },
@@ -38,7 +38,7 @@
         "create": {
             "req": {
                 "properties":  {
-                    "course": { "$ref": "Course" }
+                    "course": { "$ref": "Course.schema.json" }
                 }
             },
             "res": {
@@ -51,7 +51,7 @@
         "update": {
             "req": {
                 "properties":  {
-                    "course": { "$ref": "Course" }
+                    "course": { "$ref": "Course.schema.json" }
                 }
             }
         },
@@ -60,7 +60,7 @@
             "req": {
                 "properties":  {
                     "id": { "type": "string" },
-                    "student": { "$ref": "User" }
+                    "student": { "$ref": "User.schema.json" }
                 }
             }
         },
@@ -72,6 +72,19 @@
                     "studentID": { "type": "string" }
                 }
             }
+        }
+    },
+
+    "definitions": {
+        "DataContext": {
+            "$id": "#DataContext",
+            "type": "string",
+            "enum": [
+                "BROWSING",
+                "SEARCHING",
+                "EMBEDDED"
+            ],
+            "default": "BROWSING"
         }
     }
 }

@@ -19,8 +19,18 @@
             "default": "UNIMPLEMENTED"
         },
 
-        "message": { "type": "string" },
-        "errors":  { "type": "object" }
+        "message": {
+            "type": "string",
+            "description": "Human-readable helpful summary message directed to the user"
+        },
+        "errors":  {
+            "description": "errors could be anything",
+            "anyOf": [
+                { "type": "object" },
+                { "type": "string" },
+                { "type": "array" }
+            ] 
+        }
     },
 
     "required": ["code", "message"],
