@@ -34,7 +34,12 @@ module.exports = {
 
         function generateRequestMethod(serviceName, methodName, req, res) {
             return `
-            async ${methodName}(${js.initializedArgs("req", req, "=")}) {
+            async ${methodName}(req=${js.initializedArgs("req", req, ":")}) {
+                const {${js.CSP(req)}} = req;
+                // Validate request against its schema
+                const errors = validateRequest(req);
+                if (errors) return console.error(errors);
+
                 try {
                     const response = await axios({
                         url: "/${serviceName}/${methodName}",
@@ -54,6 +59,31 @@ module.exports = {
         function groupServiceOperations() {
             return `
             // AUTO GENERATED
+            import Ajv from 'ajv';
+            
+            const ajv = new Ajv({
+                allErrors: true, // check all rules collecting all errors.
+                schemas:   [${JSON.stringify(Object.values(spec.schemas))}],
+            });
+
+            function validateRequest(schema, data) {
+                const validate = ajv.compile(schema)
+                if (!validate(data)) {
+                    const errors = [];
+                    for(const err of validate.errors) {
+                        const dataPath = err.dataPath.substring(1);
+                        if (err.keyword === "enum") {
+                            const enumValues = err.params.allowedValues.map(v => \`"\${v}"\`).join(", ");
+                            errors.push(dataPath + " " + err.message + ": " + enumValues);
+                            continue;
+                        }
+                        errors.push(dataPath + " " + err.message);
+                    }
+                    return errors;
+                }
+                return null;
+            }
+
             export default function (axios) {
                 return {
                     ${services.map(s => `
