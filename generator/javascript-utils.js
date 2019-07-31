@@ -1,4 +1,5 @@
 const spec = require("../spec");
+const config = require("../config");
 
 module.exports = {
 
@@ -44,4 +45,83 @@ module.exports = {
     CSP(obj) {
         return `${Object.keys(obj.properties).join(", ")}`;
     },
+
+    keyTypePairs(key, schema) {
+        if (schema.hasOwnProperty("properties")) {
+            return `{${Object.keys(schema["properties"]).map(k => this.keyTypePairs(k, schema["properties"][k])).join(",")}}`;
+        }
+
+        const json = setTypes(key, schema);
+        return Object.keys(json).map(k => {
+            let prefix = "";
+            // if first char is UpperCase
+            if (!isPrimitiveType(json[k])) {
+                prefix = config.types_prefix + ".";
+            }
+            let result = `${k}: ${prefix}${json[k]}`;
+            // Deal with arrays
+            if (json[key] === key) {
+                result += "[]";
+            }
+            return result;
+        })
+            .join(", ");
+    },
+
+    /** Comma Separated Types */
+    CST(key, schema) {
+        if (schema.hasOwnProperty("properties")) {
+            return `${Object.keys(schema["properties"]).map(k => this.CST(k, schema["properties"][k])).join(",")}`;
+        }
+
+        const json = setTypes(key, schema);
+        return Object.keys(json).map(k => {
+            let prefix = "";
+            // if first char is UpperCase
+            if (json[k].charAt(0).toUpperCase() === json[k].charAt(0)) {
+                prefix = config.types_prefix + ".";
+            }
+
+            let result = `${prefix}${json[k]}`;
+            // Deal with arrays
+            if (json[key] === key) {
+                result += "[]";
+            }
+            return result;
+        })
+            .join(", ");
+    },
 };
+
+function setTypes(key, schema) {
+    if (schema["type"]) {
+        if (schema["type"] === "array") {
+            if (schema["items"]["$ref"]) {
+                return {[key]: schema["items"]["$ref"].split(".")[0] + "[]"};
+            }
+            if (schema["items"]["type"]) {
+                return {[key]: schema["items"]["$type"] + "[]"};
+            }
+        }
+        return {[key]: schema["type"]};
+    }
+    if (schema["$ref"]) {
+    // More work need to be done here... maybe?
+        return {[key]: schema["$ref"].split(".")[0]};
+    }
+    if (schema["properties"]) {
+        let obj = schema["properties"];
+        obj = Object.keys(obj)
+            .map(k => setTypes(k, obj[k]))
+            .reduce((a, b) => Object.assign(a, b), {});
+        return obj;
+    }
+}
+
+function isPrimitiveType(keyword) {
+    return [
+        "number",
+        "string",
+        "boolean",
+    ].includes(keyword);
+}

@@ -6,8 +6,7 @@
             "req": {
                 "properties":  {
                     "skip":    { "type": "number", "default": 0  },
-                    "limit":   { "type": "number", "default": 10 },
-                    "context": { "$ref": "#DataContext" }
+                    "limit":   { "type": "number", "default": 10 }
                 }
             },
             "res": {
@@ -72,19 +71,6 @@
                     "studentID": { "type": "string" }
                 }
             }
-        }
-    },
-
-    "definitions": {
-        "DataContext": {
-            "$id": "#DataContext",
-            "type": "string",
-            "enum": [
-                "BROWSING",
-                "SEARCHING",
-                "EMBEDDED"
-            ],
-            "default": "BROWSING"
         }
     }
 }

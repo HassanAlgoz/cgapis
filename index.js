@@ -25,6 +25,11 @@ async function main() {
         case "javascript-axios": {
             generator = require("./generator/javascript-axios");
         } break;
+
+        case "typescript-axios": {
+            generator = require("./generator/typescript-axios");
+        } break;
+
         }
         generator.generate({
             spec,
@@ -38,6 +43,10 @@ async function main() {
         switch(config["server_lang"].toLowerCase()) {
         case "javascript-express": {
             generator = require("./generator/javascript-express");
+        } break;
+
+        case "typescript-express": {
+            generator = require("./generator/typescript-express");
         } break;
         }
         generator.generate({
