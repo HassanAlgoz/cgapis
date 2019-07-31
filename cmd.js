@@ -4,9 +4,9 @@ const config = require("./config");
 
 program
     .version("0.0.10")
-    .description("Generates client-side & server-side code from a specification file")
-    .option("-p, --schemas-dir <*.json>", "Directory of API Schemas")
-    .option("-P, --services-dir <*.json>", "Directory of API Service Definitions")
+    .description("Generates client-side & server-side code from API specification files")
+    .option("-p, --schemas-dir <path>", "Directory of API Schemas")
+    .option("-P, --services-dir <path>", "Directory of API Services")
     .option("-a, --api-version <version>", "API Version")
     .option("-S, --server-dir <path>", "Directory for the generated server-side code")
     .option("-C, --client-dir <path>", "Directory for the generated client-side code")

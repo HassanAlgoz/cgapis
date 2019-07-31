@@ -1,34 +1,70 @@
-# Code Generation From API Specification
-Code generated for both client- and server-side. **Note**: The project is still in early stages.
+# cgapis: Code Generation From API Specification
+Code generated for both client- and server-side.
 
 ## Install
 ```bash
-npm install -g cgapis
+npm install -g cgapis # install globally to use from any directory
 ```
+
+## Workflow
+Developers agree to define:
+- Services in `/api-services` a namespace for operations
+- Schemas in `/api-schemas` defined using [JSON Schema draft-07](http://json-schema.org/)
+- Service operations defines the structure of the request (`req`) and response (`res`)
+
+## Advantages
+1. Developer Friendly
+    - auto completion
+    - better static error catching
+    - everything is documented (and supported by the IDE)
+    - everybody agrees = less arguments during work = more work done
+    - detect API design changes
+2. Auto data validation
+    - runtime error catching and handling
+    - validate on the client-side before requesting
+
+## Solution Promises
+- The solution shall not make anything harder to do (e.g., access control, error-handling, logging, or validation). Only easier and simpler
+- The solution shall adapt to changes in API specs
+- The solution shall be easily customized to the users' needs. (client language, server language, frameworks, ..etc)
+
+[Contribution Guides]()
 
 ## Usage
+Start by copying the two directories `api-schemas` and `api-services`, then run:
 ```bash
-cgapis --spec api.json
-```
-
-Generates this:
-```
-└───generated
-    ├───client
-    └───server
-        └───api
+cgapis
 ```
 
 ## Other Options
-```bash
---server-dir  ./generated/server  \
---client-dir  ./generated/client  \
---api-version v1                  \
---client-lang javascript-axios    \
---server-lang javascript-express
+```
+Usage: cgapis [options] [command]
+
+Generates client-side & server-side code from API specification files
+
+Options:
+  -V, --version                       output the version number
+  -p, --schemas-dir <path>            Directory of API Schemas
+  -P, --services-dir <path>           Directory of API Services
+  -a, --api-version <version>         API Version
+  -S, --server-dir <path>             Directory for the generated server-side code
+  -C, --client-dir <path>             Directory for the generated client-side code
+  -c, --client-lang <lang-framework>  client language and framework
+  -s, --server-lang <lang-framework>  server language and framework
+  -h, --help                          output usage information
 ```
 
-## A Solution to These Problems
+## Solution Details
+- Let the user deal with the API directly, calling methods, and getting return values
+- Abstracting away the low-level primitives such as URL endpoints, HTTP methods, request body, query strings, URL encoding, ...etc
+- The user will still have low-level control
+
+![Figure1](./img/figure1.png)
+
+- A request to the server is like passing parameters to a function
+- A response from the server is like the return value from the function
+
+## Problems Addressed
 ### 1. Client & Server Mistmatch
 REST over HTTP doesn't gaurantee API synchronization between the server and the clients. Changes made to the API on the server have to be reflected at each client. This is done manually, which wastes time, and is boring. We can automate that. Also, the API has to be clearly defined and agreed upon by both client-side and server-side developers. This eliminates any conflicts that would otherwise arise later on.
 
@@ -49,36 +85,5 @@ HTTP status codes are predefined generic messages. Trying to communicate through
 ### 4. Boilerplate Code
 Alot of code on the client side to make requests to specific URLs are just repetetive and prone to error, because there is no automatic checker that tells us whether we made a mistake in the URL, or how the parameter names are not right, or any other detials. We can solve this problem. And we can let the computer write this low-level code for you.
 
-## "What about Swagger?" you might ask
-Swagger "helps developers design, build, document, and consume RESTful Web services". It has a code generator for Javascript and Node.js. But, I have problems with Swagger. its code is unmaintained and so the generated code is old, which also makes it hard to use. I don't like their way of instantiating objects and using AMD. Also, the generated API is not typed. Finally, Swagger's API specification files include more details than I care about. I don't care about the specific URLs and where they are, and I don't care what HTTP status codes are returned because I don't think HTTP's verbs and status codes are expressive enough.
-
-Besides, I want to roll out my own generator, because I want to explore something new.
-
-## Solution
-### Code Generation From API Specification
-Abstract the low-level code, and write the required boilerplate code. Let the user deal with the API directly, calling methods, and getting return values, as if doing RPC. Just write `api.json`, a declaration of the API in terms of **services** and **data**, much like **methods** and **parameters**. Abstracting away the low-level primitives such as URL endpoints, HTTP methods, request headers and body, query strings, ...etc.
-
-![Figure1](./img/figure1.png)
-
-- A request to the server is like passing parameters to a function
-- A response from the server is like the return value from the function
-
-## `api.json`
-Currently, the JSON file is formatted like so:
-- `services`: like namespaces. For organizing operations together
-- `ops`: methods/functions in a service
-- `req`: describes function parameters. (`req` is short for request)
-- `res`: describes function return values. (`res` is short for response)
-- `refs`: defines user-defined data types (yet to be implemented)
-
-**Note:** because this is under development, many things, including the format of the JSON file, are subject to change.
-
-## Imposed Requirements
-- The solution shall not make anything harder to do (e.g., access control, error-handling, logging, or validation). Only easier and simpler.
-- The solution shall adapt to changes in api specs. (see the `diff` tool)
-- The solution shall be customizable to users' needs. (client language, server language, maybe frameworks, ..etc)
-
-
-## Extra
-### Validation
+## (Extra) Validation
 It is redundant to do validation both client- and servers-side. We can solve this problem by defining our data types once, and have the program generate all the runtime validation code required. The `ajv` (Another JSON Schema Validator) library would be used for validating schemas. The library implements the JSON-Schema standard, which makes it interoperable with other libraries as well. Custom validation code is a concern that we'll try to address as well.
