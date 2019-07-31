@@ -9,5 +9,6 @@
         "studentIDs": { "type": "array", "items": { "type": "string" } }
 
     },
+    "required": ["name", "studentIDs"],
     "additionalProperties": false
 }
