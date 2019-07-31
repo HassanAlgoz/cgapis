@@ -39,7 +39,7 @@ module.exports = {
                 numReturns = Object.keys(res["properties"]["data"]["properties"]).length;
             }
             return `
-            async ${methodName}({${js.CSP(req)}}:${js.keyTypePairs("req", req)}) : Promise<[${js.CST("res", res)}]> {
+            async ${methodName}(${js.keyTypePairs("req", req)}) : Promise<[${js.CST("res", res)}]> {
                 // Validate request against its schema
                 if (validateBeforeRequest) {
                     const errors = validateRequest(${JSON.stringify(req)}, {${js.CSP(req)}});
@@ -64,8 +64,14 @@ module.exports = {
                     });
                     return response.data;
                 } catch (err) {
-                    // Print a pretty error message
-                    console.error(\`${serviceName}Service.${methodName}(\${JSON.stringify({${js.CSP(req)}})}) error:\`, err);
+                    return [
+                        {
+                            message: "(" + err.response.status + ") " + err.message,
+                            code: "UNKNOWN",
+                            errors: err.response.data
+                        }
+                        ${numReturns > 0 ? "," + Object.keys(res["properties"]["data"]["properties"]).map(k => "null").join(",") : ""}
+                    ]
                 }
             }`;
         }

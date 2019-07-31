@@ -48,7 +48,7 @@ module.exports = {
 
     keyTypePairs(key, schema) {
         if (schema.hasOwnProperty("properties")) {
-            return `{${Object.keys(schema["properties"]).map(k => this.keyTypePairs(k, schema["properties"][k])).join(",")}}`;
+            return `${Object.keys(schema["properties"]).map(k => this.keyTypePairs(k, schema["properties"][k])).join(",")}`;
         }
 
         const json = setTypes(key, schema);
