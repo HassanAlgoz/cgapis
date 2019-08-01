@@ -1,15 +1,22 @@
+/**
+ * typescript-express.js is the implementation of a generator using typescript as a language and
+ * express as the server-side framework
+ */
+
 const path = require("path");
 const fs = require("fs");
-const {compile} = require("json-schema-to-typescript");
 
-const formatter = require("../formatter/javascript");
-const js = require("./javascript-utils");
-const utils = require("./utils");
+const formatter = require("../../formatter/javascript");
+const js = require("../javascript-utils");
+const utils = require("../utils");
 
-const spec = require("../spec");
-const config = require("../config");
+const spec = require("../../spec");
+const config = require("../../config");
 
 module.exports = {
+    /**
+     * generate takes no arguments and returns nothing
+     */
     generate() {
         const services = [];
         for(const serviceName in spec.services) {
@@ -28,26 +35,33 @@ module.exports = {
             });
         }
 
-        fs.writeFileSync(
-            path.join(config.server_dir, "/api/routes.ts"),
-            formatter.format(groupServiceRoutes()));
+        fs.mkdir(path.join(config.server_dir, "/api"), (err) => {
+            if (err && err.code !== "EEXIST") return console.error(err);
 
-        services.forEach(service => {
-            const serviceCode = formatter.format(`
-                    import { RequestHandler } from "express"
-                    import * as ${config.types_prefix} from "./types"
+            // Write /api/routes.ts
+            fs.writeFile(path.join(config.server_dir, "/api/routes.ts"), formatter.format(groupServiceRoutes()), (err2) => {
+                if (err2) return console.error(err2);
+            });
 
-                    ${service["methods"].join("\n\n")}
-                `);
-            fs.writeFileSync(
-                path.join(config.server_dir, "/api", `/${service["serviceName"]}.ts`),
-                serviceCode);
+            // Write api/{service}.ts files
+            services.forEach(service => {
+                const code = formatter.format(`
+                        import { RequestHandler } from "express"
+                        import * as ${config.types_prefix} from "./types"
+    
+                        ${service["methods"].join("\n\n")}
+                    `);
+                fs.writeFile(path.join(config.server_dir, "/api", `/${service["serviceName"]}.ts`), code, (err2) => {
+                    if (err2) return console.error(err2);
+                });
+            });
         });
 
-        fs.copyFileSync(
-            path.join(__dirname, "../templates", "javascript-express", "server.js"),
-            path.join(config.server_dir, "server.js")
-        );
+
+        // fs.copyFileSync(
+        //     path.join(__dirname, "../templates", "javascript-express", "server.js"),
+        //     path.join(config.server_dir, "server.js")
+        // );
 
         function makeRoute(serviceName, methodName, url, req, res) {
             return `
@@ -80,7 +94,12 @@ module.exports = {
 
         function groupServiceRoutes() {
             return `
-            // AUTO GENERATED
+            /**
+             * \`routes.ts\` calls your code.
+             * Humans must not touch this file
+             * AUTO GENERATED
+             */
+
             import { Router, Request, Response } from "express";
             const router = Router();
             export default router;\n\n

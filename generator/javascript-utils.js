@@ -1,4 +1,6 @@
-const spec = require("../spec");
+/**
+ * javascript-utils.js provides helper functions used for javascript generators specifically
+ */
 const config = require("../config");
 
 module.exports = {

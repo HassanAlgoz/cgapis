@@ -1,11 +1,19 @@
+/**
+ * `typescript.js` generates typescript interfaces from JSON Schemas
+ */
+
 const {compile} = require("json-schema-to-typescript");
-const fs = require("fs");
-const path = require("path");
 
 const config = require("../config");
 const spec = require("../spec");
 
+let returnValue = null;
+
 async function generate() {
+    if (returnValue) {
+        return returnValue;
+    }
+
     const result = [];
     const promises = [];
 
@@ -32,12 +40,8 @@ async function generate() {
         console.error(err);
     }
 
-    fs.writeFile(path.join(config.server_dir, "/api", "types.ts"), result.join("\n"), { encoding: "utf8" }, (err) => {
-        if (err) return console.error(err);
-    });
-    fs.writeFile(path.join(config.client_dir, "types.ts"), result.join("\n"), { encoding: "utf8" }, (err) => {
-        if (err) return console.error(err);
-    });
+    returnValue = result.join("\n");
+    return returnValue;
 }
 
 

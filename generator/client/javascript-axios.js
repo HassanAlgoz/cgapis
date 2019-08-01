@@ -1,15 +1,22 @@
+/**
+ * javascript-axios.js is the implementation of a generator using javascript as a language and
+ * axios as the client-side fetching API
+ */
+
 const path = require("path");
 const fs = require("fs");
-const {compile} = require("json-schema-to-typescript");
 
-const formatter = require("../formatter/javascript");
-const js = require("./javascript-utils");
-const utils = require("./utils");
+const formatter = require("../../formatter/javascript");
+const js = require("../javascript-utils");
+const utils = require("../utils");
 
-const spec = require("../spec");
-const config = require("../config");
+const spec = require("../../spec");
+const config = require("../../config");
 
 module.exports = {
+    /**
+     * generate takes no arguments and returns nothing
+     */
     generate() {
         const services = [];
         for(const serviceName in spec.services) {
@@ -28,32 +35,18 @@ module.exports = {
 
         // Write api.js
         fs.writeFileSync(
-            path.join(config.client_dir, "/api.ts"),
+            path.join(config.client_dir, "/api.js"),
             formatter.format(groupServiceOperations()),
             {encoding: "utf8"});
 
 
         function generateRequestMethod(serviceName, methodName, req, res) {
-            let numReturns = 0;
-            if (res) {
-                numReturns = Object.keys(res["properties"]["data"]["properties"]).length;
-            }
             return `
-            async ${methodName}(${js.keyTypePairs("req", req)}) : Promise<[${js.CST("res", res)}]> {
+            async ${methodName}(req=${js.initializedArgs("req", req, ":")}) {
+                const {${js.CSP(req)}} = req;
                 // Validate request against its schema
-                if (validateBeforeRequest) {
-                    const errors = validateRequest(${JSON.stringify(req)}, {${js.CSP(req)}});
-                    if (errors) {
-                        return [
-                            {
-                                message: "Check the documentation for the schema of the parameters",
-                                code: "INVALID_PARAMETERS",
-                                errors: errors,
-                            }
-                            ${numReturns > 0 ? "," + Object.keys(res["properties"]["data"]["properties"]).map(k => "null").join(",") : ""}
-                        ]
-                    };
-                }
+                const errors = validateRequest(req);
+                if (errors) return console.error(errors);
 
                 try {
                     const response = await axios({
@@ -62,16 +55,11 @@ module.exports = {
         ? `method: "get", params: {${js.CSP(req)}},`
         : `method: "post", data: {${js.CSP(req)}},`}
                     });
-                    return response.data;
+                    const {${js.CSP(res)}} = response.data
+                    return [${js.CSP(res)}];
                 } catch (err) {
-                    return [
-                        {
-                            message: "(" + err.response.status + ") " + err.message,
-                            code: "UNKNOWN",
-                            errors: err.response.data
-                        }
-                        ${numReturns > 0 ? "," + Object.keys(res["properties"]["data"]["properties"]).map(k => "null").join(",") : ""}
-                    ]
+                    // Print a pretty error message
+                    console.error(\`${serviceName}Service.${methodName}(\${JSON.stringify({${js.CSP(req)}})}) error:\`, err);
                 }
             }`;
         }
@@ -79,9 +67,6 @@ module.exports = {
         function groupServiceOperations() {
             return `
             // AUTO GENERATED
-            import { AxiosInstance } from 'axios';
-            import * as ${config.types_prefix} from "./types"
-
             import Ajv from 'ajv';
             
             const ajv = new Ajv({
@@ -90,14 +75,24 @@ module.exports = {
             });
 
             function validateRequest(schema, data) {
-                const validate = ajv.compile(schema);
+                const validate = ajv.compile(schema)
                 if (!validate(data)) {
-                    return validate.errors;
+                    const errors = [];
+                    for(const err of validate.errors) {
+                        const dataPath = err.dataPath.substring(1);
+                        if (err.keyword === "enum") {
+                            const enumValues = err.params.allowedValues.map(v => \`"\${v}"\`).join(", ");
+                            errors.push(dataPath + " " + err.message + ": " + enumValues);
+                            continue;
+                        }
+                        errors.push(dataPath + " " + err.message);
+                    }
+                    return errors;
                 }
                 return null;
             }
 
-            export default function (axios: AxiosInstance, validateBeforeRequest: boolean = true) {
+            export default function (axios) {
                 return {
                     ${services.map(s => `
                     ${s["serviceName"]}: {

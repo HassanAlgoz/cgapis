@@ -1,64 +1,44 @@
 #!/usr/bin/env node
-
-const fs = require("fs-extra");
-const path = require("path");
+/**
+ * index.js is the main file
+ * it is where the program starts from
+ */
+const fs = require("fs");
 
 const config = require("./config");
-const spec = require("./spec");
 
+require("./spec");
 require("./cmd");
 
+function generate(mod) {
+    try {
+        const generator = require(mod);
+        generator.generate();
+    } catch (err) {
+        if (err.code === "MODULE_NOT_FOUND") {
+            console.error(`Generator not found: "${mod}"`);
+        } else {
+            console.error(err);
+        }
+    }
+}
+
 async function main() {
-    // 1. Read Configuration File -----------------------------------------------------------------
     console.log("config:-\n", config);
-    // 2. Ensure directories exist
-    fs.ensureDirSync(path.join(config.server_dir, "/api"));
-    fs.ensureDirSync(config.client_dir);
-    // 3. Parse Schema File -----------------------------------------------------------------------
-    // 4. Validate Schema -------------------------------------------------------------------------
-    // @Todo: Validate Schema
-    // 5. Generate Code ---------------------------------------------------------------------------
-    // 5.1 Client Code
-    (function() {
-        let generator = null;
-        switch(config["client_lang"].toLowerCase()) {
-        case "javascript-axios": {
-            generator = require("./generator/javascript-axios");
-        } break;
 
-        case "typescript-axios": {
-            generator = require("./generator/typescript-axios");
-        } break;
+    fs.mkdir(config.client_dir, (err) => {
+        if (err && err.code !== "EEXIST") return console.error(err);
+    });
+    fs.mkdir(config.server_dir, (err) => {
+        if (err  && err.code !== "EEXIST") return console.error(err);
+    });
 
-        }
-        generator.generate({
-            spec,
-            outputDir: config.client_dir,
-        });
-    })();
-
-    // 5.2 Server Code
-    (function() {
-        let generator = null;
-        switch(config["server_lang"].toLowerCase()) {
-        case "javascript-express": {
-            generator = require("./generator/javascript-express");
-        } break;
-
-        case "typescript-express": {
-            generator = require("./generator/typescript-express");
-        } break;
-        }
-        generator.generate({
-            spec,
-            outputDir:      config.server_dir,
-            apiRelativeURL: config.api_relative_url,
-        });
-    })();
-
-    // 6 Generate Types
-    const tgen = require("./types-generator/types-generator");
-    await tgen();
+    if (config.client_lang) {
+        generate("./generator/client/" + config.client_lang);
+    }
+    if (config.server_lang) {
+        generate("./generator/server/" + config.server_lang);
+    }
 }
 main();
 

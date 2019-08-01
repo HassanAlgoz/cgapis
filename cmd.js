@@ -1,3 +1,8 @@
+/**
+ * cmd.js is the command-line interface that overwrites `config` from config.js with user's
+ * supplied arguments
+ */
+
 const path = require("path");
 const program = require("commander");
 const config = require("./config");

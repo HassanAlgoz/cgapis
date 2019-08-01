@@ -1,7 +1,7 @@
 const Ajv = require("ajv");
 const parser = require("../parser/json");
 
-const rawJson = 
+const rawJson = {};
 
 const json = parser.parse(rawJson);
 // console.log(json.services.User.ops.getUsersList)

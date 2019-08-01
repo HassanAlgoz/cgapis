@@ -1,3 +1,7 @@
+/**
+ * config.js is the configuration exported as `config`
+ */
+
 const path = require("path");
 
 module.exports = {

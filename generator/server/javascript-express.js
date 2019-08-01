@@ -1,14 +1,22 @@
+/**
+ * javascript-express.js is the implementation of a generator using javascript as a language and
+ * express as the server-side framework
+ */
+
 const path = require("path");
 const fs = require("fs");
 
-const formatter = require("../formatter/javascript");
-const js = require("./javascript-utils");
-const utils = require("./utils");
+const formatter = require("../../formatter/javascript");
+const js = require("../javascript-utils");
+const utils = require("../utils");
 
-const spec = require("../spec");
-const config = require("../config");
+const spec = require("../../spec");
+const config = require("../../config");
 
 module.exports = {
+    /**
+     * generate takes no arguments and returns nothing
+     */
     generate() {
         const services = [];
         for(const serviceName in spec.services) {
@@ -41,10 +49,10 @@ module.exports = {
                 serviceCode);
         });
 
-        fs.copyFileSync(
-            path.join(__dirname, "../templates", "javascript-express", "server.js"),
-            path.join(config.server_dir, "server.js")
-        );
+        // fs.copyFileSync(
+        //     path.join(__dirname, "../templates", "javascript-express", "server.js"),
+        //     path.join(config.server_dir, "server.js")
+        // );
 
         function makeRoute(serviceName, methodName, url, req, res) {
             return `
@@ -67,7 +75,12 @@ module.exports = {
 
         function groupServiceRoutes() {
             return `
-            // AUTO GENERATED
+            /**
+             * \`routes.js\` calls your code.
+             * Humans must not touch this file
+             * AUTO GENERATED
+             */
+
             const router = require('express').Router();
             module.exports = router;\n\n
             ${services.map(service => `

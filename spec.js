@@ -1,3 +1,8 @@
+/**
+ * spec.js means specification. It exports `{schemas, services}` after reading and parsing
+ * `/api-schemas` and `/api-services`
+ */
+
 const fs = require("fs");
 const path = require("path");
 
