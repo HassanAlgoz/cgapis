@@ -62,8 +62,6 @@ If you make changes to services or schemas and want to add those changes, then, 
 - The solution shall adapt to changes in API specs
 - The solution shall be easily customized to the users' needs. (client language, server language, frameworks, ..etc)
 
-<!-- [Contribution Guides]() -->
-
 ## Other Options
 ```
 Usage: cgapis [options] [command]
@@ -137,9 +135,7 @@ It is redundant to do validation both client- and servers-side. We can solve thi
 | ...                | ...        |
 
 # Contribution
-- Feel free to add support for a language or framework by contributing to this repository.
-- If you have any issues please raise them as well
-- Start by copying a file from `/generator/client` or `/generator/server` and change the code inside the `generate()` function
+Start by copying a file from `/generator/client` or `/generator/server` and change the code inside the `generate()` function. The following is a table showing what each file/directory is for:
 
 |File / Directory                    |Description                                                                                    |
 |---------------------|--------------------------------------------------------------------------------------------------------------|
@@ -154,3 +150,13 @@ It is redundant to do validation both client- and servers-side. We can solve thi
 |`/types-generator`     |Used by files in `/generator/client` and `/generator/server` to generate types for some languages, like typescript|
 |`/formatter`           |Used by files in `/generator/client` and `/generator/server` to format generated code                             |
 
+Some of the few things you can help with:
+- [ ] support more languages
+    - [ ] Go
+    - [ ] Python
+    - [ ] ...
+- [ ] generate API test stubs (maybe)
+- [ ] write tests for this source code
+- [ ] write the `diff` subcommand
+- [suggest ways to improve](https://github.com/HassanAlgoz/cgapis/issues)
+- use, and [raise issues](https://github.com/HassanAlgoz/cgapis/issues)
