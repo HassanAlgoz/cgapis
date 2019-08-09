@@ -6,6 +6,7 @@
 const path = require("path");
 const fs = require("fs");
 
+const typesGenerator = require("../../types-generator/typescript");
 const formatter = require("../../formatter/javascript");
 const js = require("../javascript-utils");
 const utils = require("../utils");
@@ -55,6 +56,17 @@ module.exports = {
                     if (err2) return console.error(err2);
                 });
             });
+
+            // Write types.ts
+            typesGenerator()
+                .then(types => {
+                    fs.writeFile(path.join(config.server_dir, "/api", "/types.ts"), types, { encoding: "utf8" }, (err2) => {
+                        if (err2) return console.error(err2);
+                    });
+                })
+                .catch(err2 => {
+                    if (err2) return console.error(err2);
+                });
         });
 
 
