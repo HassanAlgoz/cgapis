@@ -63,9 +63,9 @@ module.exports = {
                     if (errors) {
                         return [
                             {
-                                message: "Check the documentation for the schema of the parameters",
                                 code: "INVALID_PARAMETERS",
-                                errors: errors,
+                                message: "Check the documentation for the schema of the parameters",
+                                parameters: errors,
                             }
                             ${numReturns > 0 ? "," + Object.keys(res["properties"]["data"]["properties"]).map(k => "null").join(",") : ""}
                         ]
@@ -83,9 +83,8 @@ module.exports = {
                 } catch (err) {
                     return [
                         {
-                            message: "(" + err.response.status + ") " + err.message,
                             code: "UNKNOWN",
-                            errors: err.response.data
+                            message: "(" + err.response.status + ") " + err.message,
                         }
                         ${numReturns > 0 ? "," + Object.keys(res["properties"]["data"]["properties"]).map(k => "null").join(",") : ""}
                     ]
@@ -109,7 +108,18 @@ module.exports = {
             function validateRequest(schema, data) {
                 const validate = ajv.compile(schema);
                 if (!validate(data)) {
-                    return validate.errors;
+                    const errMap = {};
+                    // console.log(validate.errors);
+                    for(const err of validate.errors) {
+                        const dataPath = err.dataPath.substring(1);
+                        if (err.keyword === "enum") {
+                            const enumValues = err.params["allowedValues"].map(v => \`"\${v}"\`).join(", ");
+                            errMap[dataPath] = err.message + ": " + enumValues;
+                            continue;
+                        }
+                        errMap[dataPath] = err.message;
+                    }
+                    return errMap;
                 }
                 return null;
             }
