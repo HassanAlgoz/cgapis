@@ -8,7 +8,7 @@ const program = require("commander");
 const config = require("./config");
 
 program
-    .version("0.4.00")
+    .version("0.5.00")
     .description("Generates client-side & server-side code from API specification files")
     .option("-p, --schemas-dir <path>", "Directory of API Schemas")
     .option("-P, --services-dir <path>", "Directory of API Services")

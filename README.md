@@ -1,5 +1,5 @@
-# cgapis: Code Generation From API Specification
-`cgapis` generates code for both client- and server-side.
+# cgapis: Code Generation from API Specification
+`cgapis` generates code client-side and server-side from API specification files.
 
 ## Installation and Usage
 ```bash
@@ -10,57 +10,6 @@ Start by copying the two directories `/api-schemas` and `/api-services`, then ru
 ```bash
 cgapis
 ```
-
-## Content
-- [Workflow](#workflow)
-- [Advantages](#advantages)
-- [Promises](#promises)
-- [Options](#other-options)
-- [Solution Details](#solution-details)
-- [Problems Addressed](#problems-addressed)
-    - Client & Server Mistmatch
-    - REST is Not Enough
-    - HTTP Status Codes Aren't Experssive
-    - Boilerplate Code
-- [Supported Languages](#supported-languages)
-- [Contribution](#contribution)
-
-## Workflow
-### Initial Definition
-Developers agree to define:
-- Services in `/api-services` a namespace for operations
-- Schemas in `/api-schemas` defined using [JSON Schema draft-07](http://json-schema.org/)
-- Service operations defines the structure of the request (`req`) and response (`res`)
-
-### Code Generation
-Then, you `cd` into the directory where `/api-services` and `api-schemas` exist, and run the command `cgapis`. You'll see the output as two directories: `/generated-client` and `/generated-server`.
-
-### Definition Changes
-If you make changes to services or schemas and want to add those changes, then, you'll have to use the `diff` subcommand, which doesn't work right now. `diff` should take two versions of services and/or two versions of schemas and outputs the difference: i.e., additions and deletions.
-
-**Note:** We can think of a better solution that examines previously generated code and act on it. Ideas and contributions are welcome.
-
-## Advantages
-1. Save time
-    - Code is generated
-    - Abstract away low-level primitives such as URL endpoints, HTTP methods, request body, query strings, URL encoding, ...etc
-2. Well-defined API
-    - A contract between frontend and backend devs, which is supported by the IDE:
-        - auto-completion
-        - static error detection
-        - type checking
-        - documentation
-    - Define application-specific status codes
-3. Better Error-Handling
-    - Check and handle all possible errors (with the help of auto completion)
-    - Data Validation
-        - Using [Ajv](https://github.com/epoberezkin/ajv): The fastest JSON Schema validator
-        - Auto client-side data validation against schemas, before sending requests to the server
-
-## Promises
-- The solution shall not make anything harder to do (e.g., access control, error-handling, logging, or validation). Only easier and simpler
-- The solution shall adapt to changes in API specs
-- The solution shall be easily customized to the users' needs. (client language, server language, frameworks, ..etc)
 
 ## Other Options
 ```
@@ -80,12 +29,71 @@ Options:
   -h, --help                          output usage information
 ```
 
+## Table of Contents
+- [cgapis: Code Generation from API Specification](#cgapis-code-generation-from-api-specification)
+  - [Installation and Usage](#installation-and-usage)
+  - [Other Options](#other-options)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+    - [Specifications](#specifications)
+    - [Great Development Experience](#great-development-experience)
+    - [Robust Error-Handling](#robust-error-handling)
+  - [Workflow](#workflow)
+    - [1. Initial Definition](#1-initial-definition)
+    - [2. Code Generation](#2-code-generation)
+    - [3. Later Definition Changes](#3-later-definition-changes)
+  - [Solution Details](#solution-details)
+  - [How it Happens](#how-it-happens)
+  - [Problems Addressed](#problems-addressed)
+    - [1. Client & Server Mismatch](#1-client--server-mismatch)
+    - [2. REST is Not Enough](#2-rest-is-not-enough)
+    - [3. HTTP Status Codes Are Not Enough](#3-http-status-codes-are-not-enough)
+    - [4. Boilerplate Code = Silly Errors](#4-boilerplate-code--silly-errors)
+- [Supported Languages](#supported-languages)
+- [Contribution](#contribution)
+    - [Some of the few things you can help with:](#some-of-the-few-things-you-can-help-with)
+    - [Remember](#remember)
+
+
+## Features
+### Specifications
+- A contract between frontend and backend developers. A single source of truth for the API
+- Language independent (see: [Supported Languages](#supported-languages))
+- Server and clients are always synchronized. No more manual changes to every client when you update your server API
+### Great Development Experience
+- Deal with methods directly. Low-level primitives such as URL endpoints, HTTP methods, request body, query strings, URL encoding, ...etc are abstracted away
+- Auto-completion
+- Static error detection
+- Type checking
+- Documentation
+### Robust Error-Handling
+- Errors are defined so that none escapes checking
+- Data Validation
+  - Before requests leave the client and when requests reach the server
+  - Using off-the-shelf [JSON Schema](http://json-schema.org/) validators (e.g., [Ajv](https://github.com/epoberezkin/ajv) in case of JavaScript)
+
+
+## Workflow
+
+### 1. Initial Definition
+Developers agree to define:
+- Services in `/api-services` a namespace for operations
+- Schemas in `/api-schemas` defined using [JSON Schema draft-07](http://json-schema.org/)
+- Service operations defines the structure of the request (`req`) and response (`res`)
+
+### 2. Code Generation
+Then, you `cd` into the directory where `/api-services` and `api-schemas` exist, and run the command `cgapis`. You'll see the output as two directories: `/generated-client` and `/generated-server`.
+
+### 3. Later Definition Changes
+If you make changes to services or schemas and want to add those changes, then, you'll have to use the `diff` subcommand, which doesn't work right now. `diff` should take two versions of services and/or two versions of schemas and outputs the difference: i.e., additions and deletions.
+
+
 ## Solution Details
 - Let the user deal with the API directly, calling methods, and getting return values
 - Abstracting away the low-level primitives such as URL endpoints, HTTP methods, request body, query strings, URL encoding, ...etc
 - The user will still have low-level control
 
-![Figure1](./img/figure1.png)
+![Figure2](./img/figure2.png)
 
 - A request to the server is like passing parameters to a function
 - A response from the server is like the return value from the function
@@ -103,7 +111,7 @@ Options:
 - Only **Client** and **Server** contain your code
 
 ## Problems Addressed
-### 1. Client & Server Mistmatch
+### 1. Client & Server Mismatch
 REST over HTTP doesn't gaurantee API synchronization between the server and the clients. Changes made to the API on the server have to be reflected at each client. This is done manually, which wastes time, and is boring. We can automate that. Also, the API has to be clearly defined and agreed upon by both client-side and server-side developers. This eliminates any conflicts that would otherwise arise later on.
 
 ### 2. REST is Not Enough
@@ -115,22 +123,20 @@ Now, how would you map the following to HTTP verbs?:
 3. Increment/Decrement likes/dislikes on a course
 4. Add a comment to a node
 
-Developers' views would vary, simply because there are many ways to do it. Wouldn't it be more practical to just call `Course.dislike(courseID, userID)`, or `Node.addComment(nodeID, comment)`, and actually have the IDE auto-complete and give you type hints?
+Developers' views would vary, simply because there are many ways to do it. Wouldn't it be more practical to just call `Course.dislike(courseID, userID)`, or `Node.addComment(nodeID, comment)`, and have the IDE help?
 
-### 3. HTTP Status Codes Aren't Expressive
+### 3. HTTP Status Codes Are Not Enough
 HTTP status codes are predefined generic messages. Trying to communicate through status codes is a futile endavor. Instead, we can define application specific status codes (error codes, specifically) that make sense to the client, and are discoverable through auto-completion. Afterall, robust systems are designed to handle all errors, and to handle them well. That means clients know what errors servers might return, and handle each error accordingly, leaving no errors unhandled!.
 
-### 4. Boilerplate Code
-Alot of code on the client side to make requests to specific URLs are just repetetive and prone to error, because there is no automatic checker that tells us whether we made a mistake in the URL, or how the parameter names are not right, or any other detials. We can solve this problem. We can generate this low-level code, so that you can focus on actual application logic.
+### 4. Boilerplate Code = Silly Errors
+Alot of code on the client side to make requests to specific URLs is repetetive and prone to error, because there is no automatic checker that tells us whether we made a mistake in the URL, or how the parameter names are not right, or any other detials. We can solve this problem. We can generate this low-level code, so that you can focus on actual application logic.
 
-## (Extra) Validation
-It is redundant to do validation both client- and servers-side. We can solve this problem by defining our data types once, and have the program generate all the runtime validation code required. The `ajv` (Another JSON Schema Validator) library would be used for validating schemas. The library implements the JSON-Schema standard, which makes it interoperable with other libraries as well. Custom validation code is a concern that we'll try to address as well.
 
 # Supported Languages
 | Language           | Frameworks |
 |--------------------|------------|
-| Typescript Node    | Express.js |
-| Typescript Browser | Axios      |
+| Typescript (Node)    | Express.js |
+| Typescript (Browser) | Axios      |
 | ...                | ...        |
 | ...                | ...        |
 
@@ -150,13 +156,20 @@ Start by copying a file from `/generator/client` or `/generator/server` and chan
 |`/types-generator`     |Used by files in `/generator/client` and `/generator/server` to generate types for some languages, like typescript|
 |`/formatter`           |Used by files in `/generator/client` and `/generator/server` to format generated code                             |
 
-Some of the few things you can help with:
-- [ ] support more languages
+### Some of the few things you can help with:
+- Support more languages
     - [ ] Go
     - [ ] Python
+    - [x] typescript-express
+    - [x] typescript-axios
     - [ ] ...
-- [ ] generate API test stubs (maybe)
-- [ ] write tests for this source code
-- [ ] write the `diff` subcommand
-- [suggest ways to improve](https://github.com/HassanAlgoz/cgapis/issues)
-- use, and [raise issues](https://github.com/HassanAlgoz/cgapis/issues)
+- [ ] Write tests for this source code
+- [ ] Write the `diff` subcommand
+- [ ] Generate API test stubs (maybe)
+- [Suggest ways to improve](https://github.com/HassanAlgoz/cgapis/issues)
+- Use, and [raise issues](https://github.com/HassanAlgoz/cgapis/issues)
+
+### Remember
+- The solution shall not make anything harder to do (e.g., access control, error-handling, logging, or validation). Only easier and simpler
+- The solution shall adapt to changes in API specs
+- The solution shall be easily customized to users' needs
