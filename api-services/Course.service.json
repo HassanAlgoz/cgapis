@@ -1,0 +1,96 @@
+{
+    "$id": "http://example.com/Course.service.json",
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+
+        "getList": {
+            "type": "object",
+            "properties": {
+                "req": {
+                    "type": "object",
+                    "required": ["skip", "limit"],
+                    "properties":  {
+                        "skip":    { "type": "integer", "default": 0,  "minimum": 0},
+                        "limit":   { "type": "integer", "default": 10, "minimum": 1 }
+                    },
+                    "additionalProperties": false
+                },
+                "res": {
+                    "type": "object",
+                    "properties": {
+                        "courses":  {
+                            "type":  "array",
+                            "items": {
+                                "$ref": "Course.schema.json"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "oneOf": [
+                        { "type": "string", "const": "CourseExpired" }
+                    ]
+                }
+            }
+        },
+    
+        "create": {
+            "type": "object",
+            "properties": {
+                "req": {
+                    "type": "object",
+                    "properties":  {
+                        "course": { "$ref": "Course.schema.json" }
+                    }
+                },
+                "res": {
+                    "type": "object",
+                    "properties": {
+                        "id": { "type": "string" }
+                    }
+                }
+            }
+        },
+    
+        "update": {
+            "type": "object",
+            "properties": {
+                "req": {
+                    "type": "object",
+                    "properties":  {
+                        "course": { "$ref": "Course.schema.json" }
+                    }
+                }
+            }
+        },
+    
+        "addStudent": {
+            "type": "object",
+            "properties": {
+                "req": {
+                    "properties":  {
+                        "id": { "type": "string" },
+                        "student": { "$ref": "User.schema.json" }
+                    }
+                }
+            }
+        },
+    
+        "removeStudent": {
+            "type": "object",
+            "properties": {
+                "req": {
+                    "properties":  {
+                        "id": { "type": "string" },
+                        "studentID": { "type": "string" }
+                    }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+
+    }
+}
