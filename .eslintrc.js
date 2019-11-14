@@ -14,7 +14,6 @@ module.exports = {
         }
     },
     "rules": {
-        "sort-imports": OFF,
         "no-console": OFF,
 
         // Possible Errors
@@ -62,11 +61,11 @@ module.exports = {
             "nonwords": false,
         }],
         // "no-multi-spaces": [ERROR, { ignoreEOLComments: true }],
-        "sort-imports": [ERROR, {
-            "ignoreCase": false,
-            "ignoreMemberSort": false,
-            "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
-        }],
+        // "sort-imports": [ERROR, {
+        //     "ignoreCase": false,
+        //     "ignoreMemberSort": false,
+        //     "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+        // }],
         "comma-dangle": [WARN, "always-multiline"],
         "comma-style": [ERROR, "last"],
         "no-multiple-empty-lines": [WARN, {
