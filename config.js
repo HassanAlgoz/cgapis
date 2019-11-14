@@ -4,15 +4,43 @@
 
 const path = require("path");
 
-module.exports = {
-    server_dir:       path.join(process.cwd(), "/generated-server"),
-    client_dir:       path.join(process.cwd(), "/generated-client"),
-    schemas_dir:      path.join(process.cwd(), "/api-schemas"),
-    services_dir:     path.join(process.cwd(), "/api-services"),
-    api_relative_url: "/api/v1",
-    client_lang:      "typescript-axios",
-    server_lang:      "typescript-express",
-    schemas_uri:      "https://example.com/schemas",
+module.exports = (params) => {
 
-    types_prefix: "Type",
+    // Spec Defaults
+    const spec = {
+        endpoint:    "/api",
+        servicesDir: path.join(process.cwd(), "/api-services"),
+        schemasDir:  path.join(process.cwd(), "/api-schemas"),
+        schemasURI:  "https://example.com/schemas",
+
+        defaultErrors: [
+            "OK",
+            "NotImplemented",
+            "NotFound",
+            "InvalidParameters",
+        ],
+
+        authErrors: {
+            authentication: "AuthenticationRequired",
+            authorization:  "AuthorizationRequired",
+        },
+    };
+
+    // Client Defaults
+    const client = {
+        languageAndFramework: "javascript-axios-ts",
+        outputDir:            path.join(process.cwd(), "/generated-client"),
+    };
+
+    // Server Defaults
+    const server = {
+        languageAndFramework: "javascript-express-ts", // empty string means no server
+        outputDir:            path.join(process.cwd(), "/generated-server"),
+    };
+
+    return {
+        spec,
+        client,
+        server,
+    };
 };
